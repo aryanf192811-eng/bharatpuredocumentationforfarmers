@@ -1,0 +1,1604 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>भारतPure — किसान से घर तक</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Hindi:ital@0;1&family=Mukta:wght@400;600;700;800&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
+<style>
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   RESET & ROOT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --g1:#1B5E20;--g2:#2E7D32;--g3:#388E3C;--g4:#43A047;--g5:#81C784;--g6:#C8E6C9;
+  --s1:#E65100;--s2:#F57C00;--s3:#FB8C00;--s4:#FFA726;--s5:#FFD54F;
+  --r1:#B71C1C;--r2:#C62828;--r3:#E53935;
+  --b1:#0D47A1;--b2:#1565C0;--b3:#1976D2;
+  --gold:#F9A825;--cream:#FFFDE7;--wheat:#FFF8E1;
+  --dark:#060c04;
+}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--dark);user-select:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;}
+body{font-family:'Mukta',sans-serif;touch-action:pan-y;background:radial-gradient(ellipse 90% 60% at 15% 15%,rgba(46,125,50,.13) 0%,transparent 55%),radial-gradient(ellipse 70% 50% at 85% 85%,rgba(249,168,37,.08) 0%,transparent 50%),var(--dark);}
+
+/* ━━━ DECK & SLIDES ━━━ */
+#deck{width:100vw;height:100vh;position:relative;overflow:hidden;}
+.slide{
+  position:absolute;inset:0;width:100%;height:100%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;overflow:hidden;
+  transition:opacity .5s cubic-bezier(.4,0,.2,1),transform .5s cubic-bezier(.4,0,.2,1);
+  transform:translateX(100px);
+  padding:60px 16px 110px;
+}
+.slide.active{opacity:1;pointer-events:all;transform:translateX(0);}
+
+/* ━━━ SLIDE CONTENT WRAPPER — critical for overflow ━━━ */
+.sc{
+  max-width:min(96vw,600px);
+  width:100%;
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:14px;
+  overflow-y:auto;
+  max-height:calc(100vh - 190px);
+  -ms-overflow-style:none;scrollbar-width:none;
+}
+.sc::-webkit-scrollbar{display:none;}
+
+/* ━━━ BOTTOM NAV ━━━ */
+#nav-bar{
+  position:fixed;bottom:0;left:0;right:0;z-index:999;
+  background:rgba(4,10,3,.85);backdrop-filter:blur(28px) saturate(180%);
+  border-top:1px solid rgba(67,160,71,.18);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px 14px;gap:10px;
+  height:64px;
+  box-shadow:0 -8px 32px rgba(0,0,0,.45);
+}
+.nav-btn{
+  background:linear-gradient(135deg,rgba(67,160,71,.18),rgba(46,125,50,.1));
+  border:1px solid rgba(67,160,71,.3);
+  color:white;border-radius:50%;width:42px;height:42px;min-width:42px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:20px;transition:all .2s;flex-shrink:0;
+}
+.nav-btn:active{background:rgba(67,160,71,.4);transform:scale(.92);box-shadow:0 0 14px rgba(67,160,71,.4);}
+#dots-wrap{display:flex;gap:4px;align-items:center;flex:1;justify-content:center;flex-wrap:wrap;overflow:hidden;}
+.dot{width:5px;height:5px;border-radius:3px;background:rgba(255,255,255,.16);cursor:pointer;transition:all .35s cubic-bezier(.4,0,.2,1);flex-shrink:0;}
+.dot.on{background:linear-gradient(90deg,var(--g4),var(--gold));width:18px;box-shadow:0 0 8px rgba(67,160,71,.5);}
+#slide-counter{font-size:11px;color:rgba(255,255,255,.35);font-weight:700;min-width:38px;text-align:right;flex-shrink:0;letter-spacing:.5px;}
+
+/* ━━━ PROGRESS BAR ━━━ */
+#progress{position:fixed;top:0;left:0;height:2.5px;background:linear-gradient(90deg,var(--g4),var(--s3),var(--gold));z-index:9999;transition:width .4s ease;box-shadow:0 0 8px rgba(67,160,71,.6);}
+
+/* ━━━ MODE BADGE ━━━ */
+#mode-badge{
+  position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:9999;
+  background:rgba(6,12,4,.75);border:1px solid rgba(67,160,71,.25);
+  border-radius:100px;padding:5px 16px;
+  font-size:11px;font-weight:700;letter-spacing:.8px;
+  color:rgba(255,255,255,.6);backdrop-filter:blur(20px) saturate(200%);
+  display:flex;align-items:center;gap:7px;
+  white-space:nowrap;
+  box-shadow:0 4px 20px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.06);
+}
+.mode-dot{width:6px;height:6px;border-radius:50%;background:var(--g4);animation:blink 2s infinite;box-shadow:0 0 6px rgba(67,160,71,.8);}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.25;}}
+
+/* ━━━ SECTION PILLS ━━━ */
+.section-pill{
+  display:inline-flex;align-items:center;gap:6px;
+  border-radius:100px;padding:5px 18px;
+  font-size:clamp(11px,2.5vw,13px);font-weight:700;letter-spacing:.4px;
+  font-family:'Mukta',sans-serif;flex-shrink:0;
+  box-shadow:0 2px 12px rgba(0,0,0,.3);
+  backdrop-filter:blur(8px);
+}
+.sp-red{background:rgba(183,28,28,.28);border:1px solid rgba(229,57,53,.45);color:#EF9A9A;box-shadow:0 0 12px rgba(183,28,28,.2);}
+.sp-green{background:rgba(27,94,32,.35);border:1px solid rgba(67,160,71,.55);color:#A5D6A7;box-shadow:0 0 12px rgba(46,125,50,.2);}
+.sp-saffron{background:rgba(230,81,0,.28);border:1px solid rgba(251,140,0,.45);color:#FFCC80;}
+.sp-blue{background:rgba(13,71,161,.32);border:1px solid rgba(25,118,210,.45);color:#90CAF9;}
+.sp-gold{background:rgba(249,168,37,.22);border:1px solid rgba(249,168,37,.45);color:#FFE082;box-shadow:0 0 10px rgba(249,168,37,.15);}
+.sp-white{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);color:rgba(255,255,255,.85);}
+.sp-purple{background:rgba(103,58,183,.28);border:1px solid rgba(149,117,205,.45);color:#CE93D8;}
+
+/* ━━━ TYPOGRAPHY ━━━ */
+.ht{font-family:'Tiro Devanagari Hindi',serif;color:white;}
+.h-xl{font-family:'Tiro Devanagari Hindi',serif;font-size:clamp(32px,8vw,66px);font-weight:700;line-height:1.15;text-align:center;color:white;}
+.h-lg{font-family:'Tiro Devanagari Hindi',serif;font-size:clamp(26px,6vw,50px);font-weight:700;line-height:1.2;text-align:center;color:white;}
+.h-md{font-family:'Tiro Devanagari Hindi',serif;font-size:clamp(20px,5vw,36px);font-weight:700;line-height:1.25;text-align:center;color:white;}
+.h-sm{font-family:'Tiro Devanagari Hindi',serif;font-size:clamp(16px,3.5vw,22px);font-weight:700;line-height:1.3;text-align:center;color:white;}
+.body-text{font-family:'Tiro Devanagari Hindi',serif;font-size:clamp(13px,3vw,16px);line-height:1.7;color:rgba(255,255,255,.85);text-align:center;}
+.sub-en{font-family:'Mukta',sans-serif;font-size:clamp(10px,2vw,12px);color:rgba(255,255,255,.4);font-style:italic;text-align:center;}
+
+/* ━━━ ANIMATIONS ━━━ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(32px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fadeLeft{from{opacity:0;transform:translateX(-32px);}to{opacity:1;transform:translateX(0);}}
+@keyframes fadeRight{from{opacity:0;transform:translateX(32px);}to{opacity:1;transform:translateX(0);}}
+@keyframes zoomIn{from{opacity:0;transform:scale(.7);}to{opacity:1;transform:scale(1);}}
+@keyframes spin{from{transform:rotate(0);}to{transform:rotate(360deg);}}
+@keyframes shimmer{0%{background-position:-200% center;}100%{background-position:200% center;}}
+@keyframes ripple{0%{transform:scale(.5);opacity:.7;}100%{transform:scale(3);opacity:0;}}
+@keyframes glow{0%,100%{box-shadow:0 0 18px rgba(67,160,71,.25),0 4px 20px rgba(0,0,0,.4);}50%{box-shadow:0 0 36px rgba(67,160,71,.6),0 4px 20px rgba(0,0,0,.4);}}
+@keyframes pulse-slow{0%,100%{transform:scale(1);}50%{transform:scale(1.04);}}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+
+.active .a1{animation:fadeUp .55s .05s cubic-bezier(.22,1,.36,1) both;}
+.active .a2{animation:fadeUp .55s .16s cubic-bezier(.22,1,.36,1) both;}
+.active .a3{animation:fadeUp .55s .28s cubic-bezier(.22,1,.36,1) both;}
+.active .a4{animation:fadeUp .55s .40s cubic-bezier(.22,1,.36,1) both;}
+.active .a5{animation:fadeUp .55s .52s cubic-bezier(.22,1,.36,1) both;}
+.active .a6{animation:fadeUp .55s .64s cubic-bezier(.22,1,.36,1) both;}
+.active .al{animation:fadeLeft .55s .10s cubic-bezier(.22,1,.36,1) both;}
+.active .ar{animation:fadeRight .55s .10s cubic-bezier(.22,1,.36,1) both;}
+.active .zi{animation:zoomIn .55s .08s cubic-bezier(.22,1,.36,1) both;}
+.active .sd{animation:fadeUp .45s .05s cubic-bezier(.22,1,.36,1) both;}
+
+/* ━━━ CARDS ━━━ */
+.card{border-radius:16px;padding:16px;position:relative;overflow:hidden;transition:transform .2s;}
+.card-dark{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);box-shadow:0 4px 24px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.07);}
+.card-green{background:linear-gradient(135deg,rgba(27,94,32,.35),rgba(46,125,50,.18));border:1px solid rgba(67,160,71,.45);box-shadow:0 4px 24px rgba(27,94,32,.25),inset 0 1px 0 rgba(129,199,132,.08);}
+.card-red{background:rgba(183,28,28,.22);border:1px solid rgba(229,57,53,.32);box-shadow:0 4px 20px rgba(183,28,28,.2);}
+.card-saffron{background:rgba(230,81,0,.22);border:1px solid rgba(251,140,0,.38);}
+.card-gold{background:linear-gradient(135deg,rgba(249,168,37,.18),rgba(251,140,0,.09));border:1px solid rgba(249,168,37,.38);box-shadow:0 4px 20px rgba(249,168,37,.15),inset 0 1px 0 rgba(249,168,37,.1);}
+.card-blue{background:rgba(13,71,161,.22);border:1px solid rgba(25,118,210,.32);}
+.card-purple{background:rgba(103,58,183,.22);border:1px solid rgba(149,117,205,.38);}
+
+/* ━━━ EMOJI SIZES ━━━ */
+.emoji-xl{font-size:clamp(56px,12vw,88px);line-height:1;display:block;text-align:center;}
+.emoji-lg{font-size:clamp(42px,9vw,68px);line-height:1;display:block;text-align:center;}
+.emoji-md{font-size:clamp(28px,6vw,46px);line-height:1;display:block;text-align:center;}
+
+/* ━━━ SHIMMER ━━━ */
+.shimmer-text{
+  background:linear-gradient(90deg,#fff 0%,var(--g5) 25%,#fff 50%,var(--s4) 75%,#fff 100%);
+  background-size:200% auto;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  animation:shimmer 4s linear infinite;
+}
+
+/* ━━━ BAR ━━━ */
+.bar-track{background:rgba(255,255,255,.08);border-radius:100px;overflow:hidden;height:8px;box-shadow:inset 0 1px 3px rgba(0,0,0,.3);}
+.bar-fill{height:100%;border-radius:100px;width:0;transition:width 1.5s cubic-bezier(.22,1,.36,1);}
+.active .bar-fill{width:var(--w)!important;}
+
+/* ━━━ CHECKLIST ━━━ */
+.check-list{list-style:none;display:flex;flex-direction:column;gap:8px;text-align:left;direction:ltr;}
+.check-list li{display:flex;align-items:flex-start;gap:8px;font-family:'Tiro Devanagari Hindi',serif;font-size:clamp(12px,2.8vw,15px);color:rgba(255,255,255,.9);line-height:1.45;}
+.check-list li::before{content:'✓';color:#81C784;font-size:16px;font-weight:800;flex-shrink:0;}
+.cross-list li::before{content:'✗';color:#EF9A9A;}
+
+/* ━━━ STEP CIRCLE ━━━ */
+.step-circle{
+  width:44px;height:44px;min-width:44px;border-radius:50%;
+  background:linear-gradient(135deg,var(--g2),var(--g4));
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;font-weight:800;color:white;flex-shrink:0;
+  box-shadow:0 4px 14px rgba(67,160,71,.4);
+}
+
+/* ━━━ CHAIN ━━━ */
+.chain-item{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;opacity:.4;transition:all .4s;}
+.chain-item.highlight{opacity:1;}
+.chain-icon{font-size:clamp(24px,5.5vw,38px);filter:drop-shadow(0 3px 8px rgba(0,0,0,.4));}
+.chain-label{font-family:'Tiro Devanagari Hindi',serif;font-size:clamp(9px,2vw,12px);font-weight:700;color:rgba(255,255,255,.7);}
+.chain-arrow{font-size:clamp(14px,3vw,20px);color:rgba(229,57,53,.6);flex-shrink:0;}
+
+/* ━━━ STAT NUMBER ━━━ */
+.stat-big{
+  font-family:'Baloo 2',cursive;font-size:clamp(38px,9vw,72px);font-weight:800;line-height:1;
+  background:linear-gradient(135deg,var(--g5),var(--s4));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  display:inline-block;
+}
+
+/* ━━━ COMPARISON TABLE ━━━ */
+.comp-table{width:100%;border-collapse:separate;border-spacing:0;}
+.comp-table th{padding:10px 12px;font-family:'Tiro Devanagari Hindi',serif;font-size:clamp(12px,2.5vw,15px);font-weight:700;}
+.comp-table td{padding:9px 12px;font-family:'Tiro Devanagari Hindi',serif;font-size:clamp(11px,2.3vw,14px);border-top:1px solid rgba(255,255,255,.06);}
+.col-old{background:rgba(183,28,28,.12);color:rgba(255,255,255,.6);}
+.col-bp{background:rgba(27,94,32,.2);color:#A5D6A7;}
+.col-label{color:rgba(255,255,255,.5);font-size:clamp(10px,2vw,12px);}
+.col-old-h{background:rgba(183,28,28,.25);color:#EF9A9A;border-radius:10px 0 0 0;}
+.col-bp-h{background:rgba(27,94,32,.35);color:#81C784;border-radius:0 10px 0 0;}
+
+/* ━━━ MONEY BAR ━━━ */
+.money-bar{background:rgba(255,255,255,.06);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;width:100%;}
+.money-label{font-family:'Tiro Devanagari Hindi',serif;font-size:clamp(12px,2.5vw,14px);color:rgba(255,255,255,.7);min-width:120px;flex-shrink:0;}
+.money-amount{font-family:'Baloo 2',cursive;font-size:clamp(16px,3.8vw,22px);font-weight:800;min-width:72px;}
+
+/* ━━━ GUARANTEE BOX ━━━ */
+.guarantee-box{border-radius:14px;padding:14px 18px;background:linear-gradient(135deg,rgba(249,168,37,.15),rgba(251,140,0,.08));border:1px solid rgba(249,168,37,.35);width:100%;}
+
+/* ━━━ CLUSTER ROWS ━━━ */
+.cluster-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06);}
+.cluster-row:last-child{border-bottom:none;}
+.cluster-badge{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.cluster-badge.primary{background:rgba(67,160,71,.25);border:1.5px solid #81C784;}
+.cluster-badge.backup{background:rgba(249,168,37,.15);border:1.5px solid rgba(249,168,37,.5);}
+.cluster-badge.inactive{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.15);}
+.cluster-status{font-size:10px;font-weight:700;padding:3px 9px;border-radius:100px;letter-spacing:.4px;flex-shrink:0;}
+.cs-active{background:rgba(67,160,71,.2);color:#81C784;border:1px solid rgba(67,160,71,.4);}
+.cs-ready{background:rgba(249,168,37,.15);color:#FFE082;border:1px solid rgba(249,168,37,.3);}
+.cs-queue{background:rgba(255,255,255,.06);color:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.12);}
+
+/* ━━━ JOIN PAGE CTA ━━━ */
+.cta-farmer{
+  width:100%;padding:18px 16px;border-radius:16px;text-align:center;
+  background:linear-gradient(135deg,rgba(27,94,32,.5),rgba(56,142,60,.25));
+  border:2px solid rgba(67,160,71,.6);
+  animation:glow 3s ease-in-out infinite;
+  cursor:pointer;transition:transform .2s;
+}
+.cta-farmer:active{transform:scale(.98);}
+.cta-consumer{
+  width:100%;padding:18px 16px;border-radius:16px;text-align:center;
+  background:linear-gradient(135deg,rgba(13,71,161,.4),rgba(25,118,210,.2));
+  border:2px solid rgba(25,118,210,.5);
+  cursor:pointer;transition:transform .2s;
+}
+.cta-consumer:active{transform:scale(.98);}
+.cta-number{
+  width:100%;padding:14px 16px;border-radius:16px;text-align:center;
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.15);
+}
+/* ━━━ ADULTERATION VISUAL ━━━ */
+.adulteration-item{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  flex:1;padding:14px 10px;border-radius:14px;text-align:center;
+}
+
+.loop-label{position:absolute;font-family:'Tiro Devanagari Hindi',serif;font-size:clamp(10px,2.2vw,13px);font-weight:700;color:white;text-align:center;line-height:1.2;}
+
+/* ━━━ PHONE MOCKUP ━━━ */
+.phone-wrap{background:#111;border-radius:22px;overflow:hidden;border:2px solid rgba(255,255,255,.12);box-shadow:0 16px 48px rgba(0,0,0,.7);width:min(190px,48vw);}
+.phone-notch{background:#0a0a0a;padding:7px 12px;display:flex;align-items:center;gap:5px;}
+.phone-dot{width:6px;height:6px;border-radius:50%;background:#2E7D32;}
+.phone-title{font-size:10px;font-weight:700;color:rgba(255,255,255,.7);}
+.phone-body{padding:12px;display:flex;flex-direction:column;gap:9px;}
+.phone-row{display:flex;align-items:center;gap:7px;}
+.phone-icon{font-size:16px;width:24px;text-align:center;}
+.phone-info-label{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:rgba(255,255,255,.35);}
+.phone-info-val{font-family:'Tiro Devanagari Hindi',serif;font-size:11px;font-weight:700;color:white;}
+.phone-verified{background:linear-gradient(135deg,rgba(27,94,32,.5),rgba(46,125,50,.3));border:1px solid rgba(67,160,71,.5);border-radius:8px;padding:8px;text-align:center;}
+.phone-v-text{font-family:'Tiro Devanagari Hindi',serif;font-size:11px;font-weight:800;color:#81C784;}
+
+/* ━━━ FARMER CARD ━━━ */
+.farmer-card{border-radius:18px;padding:16px;background:linear-gradient(135deg,rgba(27,94,32,.4),rgba(46,125,50,.2));border:1px solid rgba(67,160,71,.4);width:100%;position:relative;overflow:hidden;}
+.farmer-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at top,rgba(67,160,71,.12),transparent 70%);pointer-events:none;}
+
+/* ━━━ BG PATTERNS ━━━ */
+.bg-leaves{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath d='M40 0 Q60 20 40 40 Q20 20 40 0Z' fill='rgba(67,160,71,0.03)'/%3E%3C/svg%3E");background-size:80px;}
+.bg-dots{background-image:radial-gradient(rgba(255,255,255,.04) 1px, transparent 1px);background-size:22px 22px;}
+
+/* ━━━ CLUSTER ROW (new slides) ━━━ */
+.cluster-row{display:flex;align-items:center;gap:12px;background:rgba(0,0,0,.25);border-radius:12px;padding:12px 14px;width:100%;}
+.cluster-badge{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.cluster-badge.primary{background:rgba(232,162,32,.2);border:2px solid #F9A825;}
+.cluster-badge.backup{background:rgba(67,160,71,.2);border:2px solid var(--g4);}
+.cluster-badge.inactive{background:rgba(255,255,255,.05);border:1.5px dashed rgba(255,255,255,.15);}
+.cluster-status{margin-left:auto;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:3px 9px;border-radius:100px;flex-shrink:0;font-family:'Mukta',sans-serif;}
+.cs-active{background:rgba(249,168,37,.15);color:#F9A825;}
+.cs-ready{background:rgba(67,160,71,.15);color:#81C784;}
+.cs-queue{background:rgba(255,255,255,.06);color:rgba(255,255,255,.35);}
+
+/* ━━━ SLIDE BACKGROUNDS ━━━ */
+#s0{background:radial-gradient(ellipse 90% 70% at 50% 40%,rgba(27,94,32,.18),transparent 65%),radial-gradient(ellipse 60% 50% at 80% 80%,rgba(183,120,0,.1),transparent 60%),#030603;}
+#s0 .logo-circle{width:min(180px,46vw);height:min(180px,46vw);border-radius:50%;background:radial-gradient(135deg,rgba(6,20,6,1) 0%,rgba(13,38,13,1) 100%);box-shadow:0 16px 40px rgba(0,0,0,.8),inset 0 0 20px rgba(67,160,71,.2);border:1px solid rgba(67,160,71,.4);display:flex;align-items:center;justify-content:center;overflow:visible;}
+#s1{background:radial-gradient(ellipse 80% 60% at 20% 30%,rgba(27,94,32,.35),transparent 60%),radial-gradient(ellipse 70% 50% at 80% 70%,rgba(183,28,28,.2),transparent 60%),#050a05;}
+#s2{background:radial-gradient(ellipse at 50% 80%,rgba(183,28,28,.2),transparent 60%),#06060e;}
+#s3{background:radial-gradient(ellipse at 50% 50%,rgba(100,30,10,.3),transparent 70%),#08060a;}
+#s4{background:radial-gradient(ellipse 90% 70% at 50% 40%,rgba(27,94,32,.25),transparent 65%),#030a03;}
+#s5{background:radial-gradient(ellipse at 30% 60%,rgba(27,94,32,.3),transparent 55%),#030a03;}
+#s6{background:radial-gradient(ellipse at 70% 40%,rgba(27,94,32,.25),transparent 55%),#030a03;}
+#s7{background:radial-gradient(ellipse at 50% 50%,rgba(13,71,161,.25),transparent 60%),#030610;}
+#s8{background:radial-gradient(ellipse at 30% 60%,rgba(13,71,161,.2),transparent 55%),#030610;}
+#s9{background:radial-gradient(ellipse at 60% 40%,rgba(27,94,32,.3),transparent 60%),#030a03;}
+#s10{background:radial-gradient(ellipse at 20% 50%,rgba(183,28,28,.15),transparent 45%),radial-gradient(ellipse at 80% 50%,rgba(27,94,32,.2),transparent 45%),#05050a;}
+#s11{background:radial-gradient(ellipse at 50% 30%,rgba(27,94,32,.3),transparent 60%),#030a03;}
+#s12{background:radial-gradient(ellipse at 50% 60%,rgba(13,71,161,.25),transparent 60%),#030610;}
+#s13{background:radial-gradient(ellipse at 50% 50%,rgba(27,94,32,.2),transparent 65%),#030a03;}
+#s14{background:radial-gradient(ellipse at 50% 40%,rgba(249,168,37,.1),transparent 55%),#080600;}
+#s15{background:radial-gradient(ellipse at 40% 50%,rgba(27,94,32,.2),transparent 60%),radial-gradient(ellipse at 70% 60%,rgba(13,71,161,.15),transparent 50%),#030a03;}
+#s16{background:radial-gradient(ellipse 90% 80% at 50% 50%,rgba(27,94,32,.4),transparent 70%),#030a03;}
+/* New subscription slides */
+#s17{background:radial-gradient(ellipse at 40% 40%,rgba(103,58,183,.2),transparent 60%),radial-gradient(ellipse at 70% 70%,rgba(27,94,32,.2),transparent 50%),#060308;}
+#s18{background:radial-gradient(ellipse at 60% 40%,rgba(249,168,37,.12),transparent 55%),#080600;}
+#s19{background:radial-gradient(ellipse at 30% 60%,rgba(27,94,32,.25),transparent 55%),radial-gradient(ellipse at 80% 30%,rgba(13,71,161,.15),transparent 50%),#030a03;}
+#s20{background:radial-gradient(ellipse at 50% 50%,rgba(183,28,28,.12),transparent 55%),radial-gradient(ellipse at 80% 80%,rgba(27,94,32,.15),transparent 50%),#050a05;}
+#s21{background:radial-gradient(ellipse at 30% 50%,rgba(249,168,37,.1),transparent 55%),#080600;}
+#s22{background:radial-gradient(ellipse 90% 80% at 50% 50%,rgba(27,94,32,.4),transparent 70%),#030a03;}
+
+/* ━━━ LIGHT MODE & TRANSLATE OVERRIDES ━━━ */
+html.light-mode { filter: invert(1) hue-rotate(180deg); background: #f4f6f0; }
+html.light-mode img, html.light-mode svg, html.light-mode .emoji { filter: invert(1) hue-rotate(180deg); }
+body { top: 0 !important; position: static !important; }
+.skiptranslate iframe, .goog-te-banner-frame { display: none !important; visibility: hidden !important; }
+#goog-gt-tt { display: none !important; }
+
+#top-controls { position:fixed; top:12px; right:16px; z-index:9999; display:flex; gap:10px; }
+.top-btn {
+  background:rgba(6,12,4,.75); border:1px solid rgba(67,160,71,.4); color:white;
+  border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-size:15px; backdrop-filter:blur(10px); box-shadow:0 4px 12px rgba(0,0,0,.3);
+  font-weight:700; font-family:'Mukta',sans-serif; text-decoration:none;
+}
+.top-btn:active { transform:scale(.9); }
+</style>
+</head>
+<body>
+
+<div id="google_translate_element" style="position:absolute;width:1px;height:1px;overflow:hidden;top:-9999px;opacity:0;pointer-events:none;"></div>
+<div id="top-controls">
+  <div class="top-btn" id="lang-btn" onclick="toggleLang()">A/अ</div>
+  <div class="top-btn" id="theme-btn" onclick="toggleTheme()">☀️</div>
+</div>
+
+<div id="progress"></div>
+<div id="mode-badge"><span class="mode-dot"></span><span id="mode-text">भारतPure</span></div>
+<div id="deck">
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     स्लाइड 0 — परिचय (Logo Intro)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<div class="slide bg-dots" id="s0">
+  <div class="sc" style="gap:18px;justify-content:center;">
+    <!-- BP Logo Circle -->
+    <div class="zi" id="s0-logo" style="display:flex;flex-direction:column;align-items:center;gap:0;">
+      <div class="logo-circle" style="animation:pulse-slow 4s ease-in-out infinite; overflow:hidden;">
+        <!-- बस यहाँ अपनी इमेज का नाम 'logo.png' रखें -->
+        <img src="logo.png" alt="BharatPure Logo" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
+      </div>
+    </div>
+    <!-- Brand name -->
+    <div class="a1" style="text-align:center;margin-top:4px;">
+      <div style="font-family:'Baloo 2',cursive;font-size:clamp(28px,7vw,48px);font-weight:800;letter-spacing:3px;background:linear-gradient(135deg,#F5C842,#E8A020,#C47C1A);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;">BHARATPURE</div>
+      <div style="font-family:'Mukta',sans-serif;font-size:clamp(13px,3vw,17px);color:rgba(212,136,10,0.85);letter-spacing:1px;margin-top:2px;">For Indian Farmers</div>
+    </div>
+    <!-- Tagline -->
+    <div class="a2" style="text-align:center;max-width:340px;">
+      <div class="ht" style="font-size:clamp(16px,4vw,22px);font-weight:700;color:white;line-height:1.4;">किसान से सीधा घर तक</div>
+      <div class="sub-en" style="margin-top:4px;font-size:clamp(11px,2.5vw,13px);">Farm to family — direct, pure, honest</div>
+    </div>
+    <!-- 3 intro pillars -->
+    <div class="a3" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;width:100%;max-width:400px;">
+      <div style="text-align:center;padding:10px 8px;background:rgba(27,94,32,.2);border:1px solid rgba(67,160,71,.3);border-radius:12px;">
+        <div style="font-size:clamp(18px,4.5vw,26px);">🌾</div>
+        <div class="ht" style="font-size:clamp(9px,2vw,11px);color:#A5D6A7;font-weight:700;margin-top:4px;">किसान की<br>सच्ची कमाई</div>
+      </div>
+      <div style="text-align:center;padding:10px 8px;background:rgba(13,71,161,.18);border:1px solid rgba(25,118,210,.3);border-radius:12px;">
+        <div style="font-size:clamp(18px,4.5vw,26px);">🔬</div>
+        <div class="ht" style="font-size:clamp(9px,2vw,11px);color:#90CAF9;font-weight:700;margin-top:4px;">NABL<br>प्रमाणित</div>
+      </div>
+      <div style="text-align:center;padding:10px 8px;background:rgba(249,168,37,.12);border:1px solid rgba(249,168,37,.25);border-radius:12px;">
+        <div style="font-size:clamp(18px,4.5vw,26px);">📱</div>
+        <div class="ht" style="font-size:clamp(9px,2vw,11px);color:#FFE082;font-weight:700;margin-top:4px;">QR से<br>पूरी जानकारी</div>
+      </div>
+    </div>
+    <!-- Honest note -->
+    <div class="a4" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px 16px;text-align:center;max-width:400px;width:100%;">
+      <div class="ht" style="font-size:clamp(11px,2.5vw,13px);color:rgba(255,255,255,.65);line-height:1.6;">यह एक <strong style="color:white;">startup है, ब्रांड नहीं।</strong> हम वही वादा करते हैं जो हम पूरा कर सकते हैं।<br>आगे की स्लाइड्स में सब कुछ साफ बताया है।</div>
+    </div>
+    <!-- Swipe hint -->
+    <div class="a5" style="text-align:center;">
+      <div style="font-size:11px;color:rgba(255,255,255,.28);letter-spacing:.8px;">→ स्वाइप करें या नीचे के बटन दबाएँ</div>
+    </div>
+  </div>
+</div>
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     स्लाइड 1 — दो तरफ की तकलीफ
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<div class="slide bg-leaves" id="s1">
+  <div class="sc" style="display:grid;grid-template-columns:1fr 1fr;gap:0;height:min(72vh,500px);">
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px 16px;border-right:1px solid rgba(255,255,255,.12);">
+      <div class="a1" style="width:min(80px,18vw);height:min(80px,18vw);border-radius:50%;background:linear-gradient(135deg,rgba(27,94,32,.6),rgba(67,160,71,.3));border:1.5px solid rgba(81,195,81,.5);display:flex;align-items:center;justify-content:center;font-size:clamp(40px,9vw,60px);box-shadow:0 8px 32px rgba(27,94,32,.5);">🌾</div>
+      <div class="section-pill sp-green a2">किसान</div>
+      <div class="h-sm a3" style="color:#A5D6A7;font-size:clamp(16px,4vw,22px);text-shadow:0 2px 16px rgba(27,94,32,.8);">मेहनत पूरी,<br>पैसा आधा</div>
+      <div class="sub-en a4" style="color:rgba(165,214,167,.55);">Hard work, half the money</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px 16px;">
+      <div class="a1" style="width:min(80px,18vw);height:min(80px,18vw);border-radius:50%;background:linear-gradient(135deg,rgba(230,81,0,.5),rgba(251,140,0,.25));border:1.5px solid rgba(251,140,0,.5);display:flex;align-items:center;justify-content:center;font-size:clamp(40px,9vw,60px);box-shadow:0 8px 32px rgba(230,81,0,.4);animation-delay:.12s;">🛒</div>
+      <div class="section-pill sp-saffron a2" style="animation-delay:.12s;">ग्राहक</div>
+      <div class="h-sm a3" style="color:#FFCC80;animation-delay:.12s;font-size:clamp(16px,4vw,22px);text-shadow:0 2px 16px rgba(230,81,0,.6);">भोजन करता है,<br>जानता नहीं</div>
+      <div class="sub-en a4" style="animation-delay:.12s;color:rgba(255,204,128,.5);">Eats food, knows nothing</div>
+    </div>
+  </div>
+  <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,rgba(27,94,32,.7),rgba(56,142,60,.4));border:2px solid rgba(67,160,71,.6);display:flex;align-items:center;justify-content:center;font-size:20px;backdrop-filter:blur(12px);box-shadow:0 4px 20px rgba(0,0,0,.5);animation:glow 3s ease-in-out infinite;" class="zi">⚡</div>
+</div>
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     स्लाइड 2 — असली समस्या
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<div class="slide" id="s2">
+  <div class="sc">
+    <div class="section-pill sp-red sd">💔 असली समस्या</div>
+    <div class="h-lg a1">किसान को <span style="color:#EF9A9A;">कम</span> मिलता है,<br>आपको <span style="color:#FFCC80;">मिलावट</span> मिलती है</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;">
+      <div class="card card-red a3" style="text-align:center;padding:16px 12px;">
+        <div style="font-size:clamp(38px,9vw,58px);margin-bottom:8px;line-height:1;">😔</div>
+        <div style="color:#EF9A9A;font-family:'Tiro Devanagari Hindi',serif;font-size:clamp(13px,3vw,16px);font-weight:700;line-height:1.4;">फसल कटने के बाद<br>क्रेता की तलाश</div>
+        <div class="sub-en" style="margin-top:5px;color:rgba(239,154,154,.5);">No buyer guaranteed</div>
+      </div>
+      <div class="card card-saffron a4" style="text-align:center;padding:16px 12px;">
+        <div style="font-size:clamp(38px,9vw,58px);margin-bottom:8px;line-height:1;">🤷</div>
+        <div style="color:#FFCC80;font-family:'Tiro Devanagari Hindi',serif;font-size:clamp(13px,3vw,16px);font-weight:700;line-height:1.4;">खाने में क्या है?<br>किसी को नहीं पता</div>
+        <div class="sub-en" style="margin-top:5px;color:rgba(255,204,128,.5);">No food transparency</div>
+      </div>
+    </div>
+    <!-- Impactful stat -->
+    <div class="a5" style="background:linear-gradient(135deg,rgba(183,28,28,.25),rgba(183,28,28,.1));border:1.5px solid rgba(229,57,53,.45);border-radius:14px;padding:14px 18px;display:flex;align-items:center;gap:12px;width:100%;">
+      <div style="font-size:28px;flex-shrink:0;">⚠️</div>
+      <div>
+        <div style="font-family:'Baloo 2',cursive;font-size:clamp(22px,5vw,32px);font-weight:800;color:#EF5350;line-height:1;">25%</div>
+        <div class="ht" style="font-size:clamp(12px,2.8vw,15px);color:#EF9A9A;font-weight:700;line-height:1.4;">भारत के खाने में मिलावट — FSSAI 2023</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     स्लाइड 3 — बीच के दलाल
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<div class="slide" id="s3">
+  <div class="sc">
+    <div class="section-pill sp-red sd">🔗 बीच के दलाल</div>
+    <div class="h-md a1">आपका खाना यहाँ से गुज़रता है…</div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:0;width:100%;padding:4px 0;">
+      <div class="chain-item a2" id="c1"><span class="chain-icon">🌾</span><span class="chain-label">किसान</span></div>
+      <span class="chain-arrow a3">›</span>
+      <div class="chain-item a3" id="c2"><span class="chain-icon">🤝</span><span class="chain-label">आढ़तिया</span></div>
+      <span class="chain-arrow a4">›</span>
+      <div class="chain-item a4" id="c3"><span class="chain-icon">🏭</span><span class="chain-label">प्रोसेसर</span></div>
+      <span class="chain-arrow a5">›</span>
+      <div class="chain-item a5" id="c4"><span class="chain-icon">🏪</span><span class="chain-label">दुकान</span></div>
+      <span class="chain-arrow a6">›</span>
+      <div class="chain-item a6" id="c5"><span class="chain-icon">🏠</span><span class="chain-label">आप</span></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;" class="a3">
+      <div class="card card-red" style="text-align:center;">
+        <div style="font-family:'Baloo 2',cursive;font-size:clamp(26px,6vw,40px);font-weight:800;color:#EF9A9A;">4–5</div>
+        <div class="ht" style="font-size:clamp(11px,2.5vw,13px);color:rgba(255,255,255,.6);margin-top:3px;">बीच के आदमी</div>
+        <div class="sub-en">middlemen</div>
+      </div>
+      <div class="card card-red" style="text-align:center;">
+        <div style="font-family:'Baloo 2',cursive;font-size:clamp(26px,6vw,40px);font-weight:800;color:#EF9A9A;">40%</div>
+        <div class="ht" style="font-size:clamp(11px,2.5vw,13px);color:rgba(255,255,255,.6);margin-top:3px;">किसान का पैसा कटता है</div>
+        <div class="sub-en">cut from farmer's price</div>
+      </div>
+    </div>
+    <div class="a4" style="background:rgba(183,28,28,.15);border:1px solid rgba(229,57,53,.3);border-radius:12px;padding:11px 16px;text-align:center;width:100%;">
+      <span class="ht" style="font-size:clamp(12px,2.8vw,15px);color:#EF9A9A;font-weight:700;">हर पड़ाव पर — मूल्य घटा, विश्वास घटा</span>
+    </div>
+  </div>
+</div>
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     स्लाइड 4 — भारतPure हल
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<div class="slide" id="s4">
+  <div class="sc">
+    <div class="section-pill sp-green sd">✅ हल</div>
+    <div class="a1" style="text-align:center;">
+      <div style="font-family:'Baloo 2',cursive;font-size:clamp(44px,10vw,80px);font-weight:800;line-height:1;" class="shimmer-text">भारतPure</div>
+      <div class="ht" style="font-size:clamp(15px,3.5vw,20px);color:rgba(255,255,255,.6);margin-top:4px;">प्रत्यक्ष। प्रमाणित। पारदर्शी।</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;width:100%;max-width:380px;" class="a2">
+      <div style="text-align:center;flex:1;">
+        <span style="font-size:clamp(36px,8vw,56px);">🌾</span>
+        <div class="ht" style="font-size:13px;color:rgba(255,255,255,.6);margin-top:3px;">किसान</div>
+      </div>
+      <div style="flex:2;position:relative;">
+        <div style="height:2px;background:linear-gradient(90deg,rgba(67,160,71,.8),rgba(251,140,0,.8));border-radius:2px;"></div>
+        <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:#0a0a0a;padding:0 5px;font-size:16px;">💚</div>
+      </div>
+      <div style="text-align:center;flex:1;">
+        <span style="font-size:clamp(36px,8vw,56px);">🏠</span>
+        <div class="ht" style="font-size:13px;color:rgba(255,255,255,.6);margin-top:3px;">आपका घर</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:9px;width:100%;" class="a3">
+      <div class="card card-green" style="text-align:center;padding:12px;">
+        <span style="font-size:24px;">🤝</span>
+        <div class="ht" style="font-size:clamp(11px,2.5vw,13px);color:#A5D6A7;font-weight:700;margin-top:5px;">पहले करार, फिर बुआई</div>
+      </div>
+      <div class="card card-green" style="text-align:center;padding:12px;">
+        <span style="font-size:24px;">🧪</span>
+        <div class="ht" style="font-size:clamp(11px,2.5vw,13px);color:#A5D6A7;font-weight:700;margin-top:5px;">NABL लैब टेस्ट</div>
+      </div>
+      <div class="card card-green" style="text-align:center;padding:12px;">
+        <span style="font-size:24px;">📱</span>
+        <div class="ht" style="font-size:clamp(11px,2.5vw,13px);color:#A5D6A7;font-weight:700;margin-top:5px;">QR से सब दिखे</div>
+      </div>
+      <div class="card card-green" style="text-align:center;padding:12px;">
+        <span style="font-size:24px;">💰</span>
+        <div class="ht" style="font-size:clamp(11px,2.5vw,13px);color:#A5D6A7;font-weight:700;margin-top:5px;">48 घंटे में भुगतान</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     स्लाइड 5 — कदम 1: करार
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<div class="slide" id="s5">
+  <div class="sc">
+    <div class="section-pill sp-green sd">कदम 1</div>
+    <div class="h-md a1">बीज डालने से पहले<br><span style="color:#81C784;">खरीददार पक्का</span></div>
+    <div class="sub-en a2">Guaranteed buyer BEFORE you sow</div>
+    <div style="display:flex;align-items:center;gap:6px;width:100%;padding:4px 0;" class="a3">
+      <div style="flex:1;text-align:center;">
+        <span style="font-size:clamp(28px,7vw,46px);">🤝</span>
+        <div class="ht" style="font-size:12px;color:rgba(255,255,255,.6);margin-top:3px;">करार</div>
+      </div>
+      <div style="font-size:22px;color:rgba(67,160,71,.7);">→</div>
+      <div style="flex:1;text-align:center;">
+        <span style="font-size:clamp(28px,7vw,46px);">🌱</span>
+        <div class="ht" style="font-size:12px;color:rgba(255,255,255,.6);margin-top:3px;">बुआई</div>
+      </div>
+      <div style="font-size:22px;color:rgba(67,160,71,.7);">→</div>
+      <div style="flex:1;text-align:center;">
+        <span style="font-size:clamp(28px,7vw,46px);">🌾</span>
+        <div class="ht" style="font-size:12px;color:rgba(255,255,255,.6);margin-top:3px;">फसल</div>
+      </div>
+      <div style="font-size:22px;color:rgba(67,160,71,.7);">→</div>
+      <div style="flex:1;text-align:center;">
+        <span style="font-size:clamp(28px,7vw,46px);">💰</span>
+        <div class="ht" style="font-size:12px;color:rgba(255,255,255,.6);margin-top:3px;">भुगतान</div>
+      </div>
+    </div>
+    <div class="card card-gold a4" style="width:100%;text-align:center;">
+      <div style="font-size:20px;margin-bottom:7px;">💸</div>
+      <div class="ht" style="font-size:clamp(13px,3vw,16px);color:#FFE082;font-weight:700;line-height:1.5;">करार के साथ मिलता है <span style="color:#F9A825;font-size:clamp(16px,4vw,20px);">₹5,000–10,000</span> अग्रिम</div>
+      <div class="sub-en" style="margin-top:5px;">Advance payment at contract signing</div>
+    </div>
+    <div class="a5" style="display:flex;align-items:center;gap:9px;background:rgba(27,94,32,.2);border:1px solid rgba(67,160,71,.3);border-radius:12px;padding:11px 14px;width:100%;">
+      <span style="font-size:20px;flex-shrink:0;">📋</span>
+      <div class="ht" style="font-size:clamp(12px,2.5vw,14px);color:#A5D6A7;font-weight:600;line-height:1.4;">100% खरीद की गारंटी — अगर कोई तकनीकी दिक्कत आई, तो भी आपका नुकसान शून्य।</div>
+    </div>
+  </div>
+</div>
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     स्लाइड 6 — कदम 2: मिलावट शून्य
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<div class="slide" id="s6">
+  <div class="sc">
+    <div class="section-pill sp-green sd">कदम 2</div>
+    <div class="h-md a1">एक बैच = एक किसान दल<br><span style="color:#81C784;">मिलावट शून्य</span></div>
+    <div style="display:flex;gap:9px;width:100%;justify-content:center;" class="a3">
+      <div style="flex:1;border-radius:12px;padding:12px;background:linear-gradient(135deg,rgba(27,94,32,.4),rgba(46,125,50,.2));border:2px solid rgba(67,160,71,.6);text-align:center;">
+        <span style="font-size:clamp(24px,5.5vw,36px);">🌾</span>
+        <div class="ht" style="font-size:clamp(11px,2.5vw,13px);font-weight:700;color:#A5D6A7;margin-top:5px;">राजकोट दल</div>
+        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.4);margin-top:3px;letter-spacing:.5px;">BATCH #R-42</div>
+      </div>
+      <div style="flex:1;border-radius:12px;padding:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);text-align:center;opacity:.3;">
+        <span style="font-size:clamp(24px,5.5vw,36px);">🌾</span>
+        <div class="ht" style="font-size:clamp(11px,2.5vw,13px);font-weight:700;color:rgba(255,255,255,.5);margin-top:5px;">आनंद दल</div>
+        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.2);margin-top:3px;">BATCH #A-19</div>
+      </div>
+      <div style="flex:1;border-radius:12px;padding:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);text-align:center;opacity:.3;">
+        <span style="font-size:clamp(24px,5.5vw,36px);">🌾</span>
+        <div class="ht" style="font-size:clamp(11px,2.5vw,13px);font-weight:700;color:rgba(255,255,255,.5);margin-top:5px;">सूरत दल</div>
+        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.2);margin-top:3px;">BATCH #S-07</div>
+      </div>
+    </div>
+    <div class="a4" style="display:flex;align-items:center;gap:9px;background:rgba(183,28,28,.15);border:1px solid rgba(229,57,53,.3);border-radius:12px;padding:12px 14px;width:100%;justify-content:center;">
+      <span style="font-size:20px;">🚫</span>
+      <div class="ht" style="font-size:clamp(13px,3vw,16px);color:#EF9A9A;font-weight:800;">कोई मिलावट नहीं — कभी भी, किसी भी बैच में</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;width:100%;" class="a5">
+      <div class="card card-green" style="text-align:center;padding:11px;">
+        <span style="font-size:20px;">🚛</span>
+        <div class="ht" style="font-size:clamp(11px,2.5vw,13px);color:#A5D6A7;font-weight:700;margin-top:5px;">हमारी गाड़ी आएगी</div>
+      </div>
+      <div class="card card-green" style="text-align:center;padding:11px;">
+        <span style="font-size:20px;">🏷️</span>
+        <div class="ht" style="font-size:clamp(11px,2.5vw,13px);color:#A5D6A7;font-weight:700;margin-top:5px;">हमारे थैले, हमारी ज़िम्मेदारी</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     स्लाइड 7 — कदम 3: NABL लैब
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<div class="slide" id="s7">
+  <div class="sc">
+    <div class="h-md a1">दो-स्तरीय<br><span style="color:#90CAF9;">गुणवत्ता जाँच</span></div>
+    <!-- Tiered testing explanation -->
+    <div class="a2" style="width:100%;display:flex;flex-direction:column;gap:6px;">
+      <div style="background:rgba(13,71,161,.15);border:1px solid rgba(25,118,210,.3);border-radius:12px;padding:12px 14px;display:flex;align-items:flex-start;gap:10px;">
+        <div style="width:32px;height:32px;border-radius:50%;background:rgba(25,118,210,.3);border:1.5px solid #90CAF9;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;font-weight:800;color:#90CAF9;">1</div>
+        <div>
+          <div class="ht" style="font-size:clamp(12px,2.8vw,15px);font-weight:800;color:white;">खेत पर: रैपिड किट टेस्ट</div>
+          <div class="ht" style="font-size:clamp(10px,2.3vw,12px);color:rgba(255,255,255,.55);margin-top:2px;">हर बैच — कीटनाशक, नमी, मिलावट की पहली जाँच। 30 मिनट में नतीजा। प्रारंभिक clearance।</div>
+        </div>
+      </div>
+      <div style="background:rgba(13,71,161,.2);border:1px solid rgba(25,118,210,.4);border-radius:12px;padding:12px 14px;display:flex;align-items:flex-start;gap:10px;">
+        <div style="width:32px;height:32px;border-radius:50%;background:rgba(25,118,210,.4);border:1.5px solid #64B5F6;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;font-weight:800;color:#64B5F6;">2</div>
+        <div>
+          <div class="ht" style="font-size:clamp(12px,2.8vw,15px);font-weight:800;color:white;">NABL लैब: क्लस्टर सैंपलिंग</div>
+          <div class="ht" style="font-size:clamp(10px,2.3vw,12px);color:rgba(255,255,255,.55);margin-top:2px;">हर क्लस्टर के 20% बैच — यादृच्छिक (random) — NABL certified lab में पूरी रिपोर्ट। रिकॉर्ड blockchain पर।</div>
+        </div>
+      </div>
+    </div>
+    <!-- Lab report sample -->
+    <div class="a3" style="background:rgba(13,71,161,.12);border:1px solid rgba(25,118,210,.25);border-radius:14px;padding:14px;width:100%;">
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.08);">
+        <span style="font-size:22px;">🧪</span>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:white;">BharatPure Quality Report</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.4);">Batch #R-42 · राजकोट · अप्रैल 2025</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span class="ht" style="font-size:clamp(11px,2.5vw,13px);color:rgba(255,255,255,.7);">कीटनाशक स्तर</span>
+            <span style="font-size:clamp(11px,2.3vw,13px);font-weight:700;color:#A5D6A7;">0.8 ppm ✓</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="--w:12%;background:linear-gradient(90deg,#2E7D32,#81C784);"></div></div>
+          <div style="font-size:9px;color:rgba(255,255,255,.3);margin-top:2px;">सुरक्षित सीमा से 6 गुना कम</div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span class="ht" style="font-size:clamp(11px,2.5vw,13px);color:rgba(255,255,255,.7);">शुद्धता स्कोर</span>
+            <span style="font-size:clamp(11px,2.3vw,13px);font-weight:700;color:#A5D6A7;">94% ✓</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="--w:94%;background:linear-gradient(90deg,#1B5E20,#43A047);"></div></div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span class="ht" style="font-size:clamp(11px,2.5vw,13px);color:rgba(255,255,255,.7);">नमी</span>
+            <span style="font-size:clamp(11px,2.3vw,13px);font-weight:700;color:#FFE082;">8.2% ✓</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="--w:32%;background:linear-gradient(90deg,#E65100,#FFA726);"></div></div>
+        </div>
+      </div>
+      <div style="margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:5px;">
+        <span style="font-size:14px;">🔒</span>
+        <span style="font-size:10px;color:rgba(255,255,255,.4);">NABL Certified Lab — April 2025</span>
+      </div>
+    </div>
+    <div class="a4" style="display:flex;align-items:center;gap:9px;background:rgba(27,94,32,.2);border:1px solid rgba(67,160,71,.3);border-radius:12px;padding:11px 14px;width:100%;">
+      <span style="font-size:18px;flex-shrink:0;">✅</span>
+      <div class="ht" style="font-size:clamp(12px,2.5vw,14px);color:#A5D6A7;font-weight:700;line-height:1.4;">बैच फेल → बैकअप क्लस्टर से डिलीवरी। ग्राहक को इंतज़ार नहीं।</div>
+    </div>
+  </div>
+</div>
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     स्लाइड 8 — कदम 4: QR ट्रेस
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<div class="slide" id="s8">
+  <div class="sc">
+    <div class="section-pill sp-blue sd">कदम 4</div>
+    <div class="h-md a1">स्कैन करो —<br><span style="color:#90CAF9;">सब दिखेगा</span></div>
+    <div style="display:flex;align-items:center;gap:14px;width:100%;justify-content:center;" class="a3">
+      <div style="text-align:center;">
+        <div style="width:min(140px,38vw);min-height:165px;padding:12px 8px;background:linear-gradient(145deg,#1B5E20,#0a2e10);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border:1px solid rgba(67,160,71,.3);box-shadow:0 10px 32px rgba(0,0,0,.5);">
+          <span style="font-size:clamp(24px,6vw,36px);">🌾</span>
+          <span style="font-size:10px;font-weight:800;color:white;">भारतPure</span>
+          <span style="font-size:9px;color:rgba(255,255,255,.5);">गेहूँ · 1 kg</span>
+          <div style="width:38px;height:38px;background:white;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:20px;position:relative;">
+            📱<div style="position:absolute;inset:-7px;border-radius:50%;border:2px solid rgba(67,160,71,.5);animation:ripple 2s infinite;"></div>
+          </div>
+        </div>
+        <div class="ht" style="font-size:11px;color:rgba(255,255,255,.45);margin-top:7px;">पैकेट</div>
+      </div>
+      <div style="font-size:20px;color:rgba(25,118,210,.7);">📲</div>
+      <div class="phone-wrap">
+        <div class="phone-notch"><div class="phone-dot"></div><div class="phone-title">BharatPure Trace</div></div>
+        <div class="phone-body">
+          <div class="phone-row"><span class="phone-icon">👨‍🌾</span><div><div class="phone-info-label">किसान</div><div class="phone-info-val">सत्यापित किसान</div></div></div>
+          <div class="phone-row"><span class="phone-icon">📍</span><div><div class="phone-info-label">गाँव</div><div class="phone-info-val">धांगधरा, राजकोट</div></div></div>
+          <div class="phone-row"><span class="phone-icon">🧪</span><div><div class="phone-info-label">लैब रिपोर्ट</div><div class="phone-info-val" style="font-family:'Mukta',sans-serif;font-size:10px;">NABL Certified ✓</div></div></div>
+          <div class="phone-row"><span class="phone-icon">📅</span><div><div class="phone-info-label">फसल तारीख</div><div class="phone-info-val">28 मार्च 2025</div></div></div>
+          <div class="phone-verified"><div class="phone-v-text">✅ शुद्ध · मिलावट नहीं</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="a4" style="background:rgba(13,71,161,.15);border:1px solid rgba(25,118,210,.25);border-radius:12px;padding:11px 14px;width:100%;text-align:center;">
+      <div class="ht" style="font-size:clamp(12px,2.8vw,15px);color:#90CAF9;font-weight:700;">WhatsApp पर लिखो 'SCAN R42' — सब पता चलेगा</div>
+    </div>
+    <div class="a5" style="display:flex;align-items:flex-start;gap:9px;background:rgba(249,168,37,.1);border:1px solid rgba(249,168,37,.25);border-radius:12px;padding:11px 14px;width:100%;">
+      <span style="font-size:18px;flex-shrink:0;">🔐</span>
+      <div>
+        <div class="ht" style="font-size:clamp(12px,2.8vw,14px);font-weight:800;color:#FFE082;">छेड़छाड़-रोधी पैकेजिंग</div>
+        <div class="ht" style="font-size:clamp(10px,2.3vw,12px);color:rgba(255,255,255,.55);margin-top:2px;">हर QR क्रिप्टोग्राफ़िक — copy नहीं होगा। पैकेट खोलने पर QR "burn" — दोबारा इस्तेमाल नहीं।</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     स्लाइड 9 — 48 घंटे भुगतान
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<div class="slide" id="s9">
+  <div class="sc">
+    <div class="section-pill sp-green sd">💰 भुगतान</div>
+    <div class="h-md a1"><span style="color:#81C784;">48 घंटे</span> में<br>सीधा बैंक में</div>
+    <div class="sub-en a2">Direct bank transfer in 48 hours — not 30 days</div>
+    <div style="display:flex;flex-direction:column;gap:9px;width:100%;" class="a3">
+      <div class="money-bar">
+        <div class="money-label">MSP भाव</div>
+        <div class="money-amount" style="color:rgba(255,255,255,.5);">₹2,275</div>
+        <div style="flex:1;"><div class="bar-track"><div class="bar-fill" style="--w:68%;background:rgba(255,255,255,.15);"></div></div></div>
+      </div>
+      <div class="money-bar" style="border:1px solid rgba(67,160,71,.3);background:rgba(27,94,32,.15);">
+        <div class="money-label">भारतPure भाव</div>
+        <div class="money-amount" style="color:#81C784;">₹2,680</div>
+        <div style="flex:1;"><div class="bar-track"><div class="bar-fill" style="--w:90%;background:linear-gradient(90deg,#1B5E20,#81C784);"></div></div></div>
+      </div>
+    </div>
+    <div class="card card-gold a4" style="width:100%;text-align:center;">
+      <div style="font-size:20px;margin-bottom:6px;">📈</div>
+      <div class="ht" style="font-size:clamp(13px,3vw,16px);color:#FFE082;font-weight:700;line-height:1.5;">5 एकड़ गेहूँ पर <span style="font-size:clamp(17px,4vw,22px);color:#F9A825;">₹12,150</span> ज़्यादा कमाई</div>
+      <div class="sub-en" style="margin-top:4px;">₹405 extra/quintal × 30 quintals on 5 acres</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;width:100%;" class="a5">
+      <div class="card card-green" style="text-align:center;padding:12px;">
+        <div style="font-size:24px;margin-bottom:5px;">📱</div>
+        <div class="ht" style="font-size:clamp(11px,2.5vw,13px);color:#A5D6A7;font-weight:700;">UPI ट्रांसफर</div>
+      </div>
+      <div class="card card-green" style="text-align:center;padding:12px;">
+        <div style="font-size:24px;margin-bottom:5px;">📲</div>
+        <div class="ht" style="font-size:clamp(11px,2.5vw,13px);color:#A5D6A7;font-weight:700;">WhatsApp पुष्टि</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     स्लाइड 10 — तुलना
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<div class="slide" id="s10">
+  <div class="sc">
+    <div class="section-pill sp-white sd">तुलना</div>
+    <div class="h-md a1">पुराना तरीका <span style="color:#EF9A9A;">vs</span> <span style="color:#81C784;">भारतPure</span></div>
+    <div class="a2" style="width:100%;overflow-x:auto;">
+      <table class="comp-table" style="min-width:280px;border-radius:12px;overflow:hidden;">
+        <thead>
+          <tr>
+            <th style="padding:9px 10px;font-size:11px;color:rgba(255,255,255,.4);text-align:right;background:rgba(255,255,255,.04);">मुद्दा</th>
+            <th class="col-old-h" style="padding:9px 10px;text-align:center;">पुराना तरीका</th>
+            <th class="col-bp-h" style="padding:9px 10px;text-align:center;">भारतPure</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="col-label" style="padding:9px 10px;text-align:right;">खरीददार</td><td class="col-old" style="text-align:center;padding:9px 10px;">❌ फसल बाद ढूंढो</td><td class="col-bp" style="text-align:center;padding:9px 10px;">✅ पहले पक्का</td></tr>
+          <tr><td class="col-label" style="padding:9px 10px;text-align:right;">भाव</td><td class="col-old" style="text-align:center;padding:9px 10px;">❌ दलाल तय करे</td><td class="col-bp" style="text-align:center;padding:9px 10px;">✅ MSP + प्रीमियम</td></tr>
+          <tr><td class="col-label" style="padding:9px 10px;text-align:right;">भुगतान</td><td class="col-old" style="text-align:center;padding:9px 10px;">❌ 7–30 दिन बाद</td><td class="col-bp" style="text-align:center;padding:9px 10px;">✅ 48 घंटे में</td></tr>
+          <tr><td class="col-label" style="padding:9px 10px;text-align:right;">लैब टेस्ट</td><td class="col-old" style="text-align:center;padding:9px 10px;">❌ कोई नहीं</td><td class="col-bp" style="text-align:center;padding:9px 10px;">✅ NABL प्रमाणित</td></tr>
+          <tr><td class="col-label" style="padding:9px 10px;text-align:right;">मिलावट</td><td class="col-old" style="text-align:center;padding:9px 10px;">❌ पता नहीं</td><td class="col-bp" style="text-align:center;padding:9px 10px;">✅ शून्य</td></tr>
+          <tr><td class="col-label" style="padding:9px 10px;text-align:right;">पारदर्शिता</td><td class="col-old" style="text-align:center;padding:9px 10px;">❌ कुछ नहीं</td><td class="col-bp" style="text-align:center;padding:9px 10px;">✅ QR से सब</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     स्लाइड 11 — किसान के फायदे
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<div class="slide" id="s11">
+  <div class="sc">
+    <div class="section-pill sp-green sd">🌾 किसान भाइयों के लिए</div>
+    <div class="h-md a1"><span style="color:#81C784;">आपके</span> चार बड़े फायदे</div>
+    <div style="display:flex;flex-direction:column;gap:9px;width:100%;">
+      <div class="a2" style="display:flex;align-items:flex-start;gap:11px;background:rgba(27,94,32,.2);border:1px solid rgba(67,160,71,.3);border-radius:13px;padding:12px;">
+        <div class="step-circle" style="font-size:18px;">📋</div>
+        <div>
+          <div class="ht" style="font-size:clamp(13px,3vw,16px);font-weight:800;color:white;line-height:1.3;">पक्का खरीददार — फसल से पहले</div>
+          <div class="ht" style="font-size:clamp(11px,2.5vw,13px);color:rgba(255,255,255,.6);margin-top:3px;">बेचने की टेंशन खत्म। करार पहले से।</div>
+        </div>
+      </div>
+      <div class="a3" style="display:flex;align-items:flex-start;gap:11px;background:rgba(27,94,32,.2);border:1px solid rgba(67,160,71,.3);border-radius:13px;padding:12px;">
+        <div class="step-circle" style="font-size:18px;">💰</div>
+        <div>
+          <div class="ht" style="font-size:clamp(13px,3vw,16px);font-weight:800;color:white;line-height:1.3;">20–30% ज़्यादा कमाई</div>
+          <div class="ht" style="font-size:clamp(11px,2.5vw,13px);color:rgba(255,255,255,.6);margin-top:3px;">दलाल नहीं, सीधा आपको। गुणवत्ता पर बोनस।</div>
+        </div>
+      </div>
+      <div class="a4" style="display:flex;align-items:flex-start;gap:11px;background:rgba(27,94,32,.2);border:1px solid rgba(67,160,71,.3);border-radius:13px;padding:12px;">
+        <div class="step-circle" style="font-size:18px;">⭐</div>
+        <div>
+          <div class="ht" style="font-size:clamp(13px,3vw,16px);font-weight:800;color:white;line-height:1.3;">आपका नाम, आपकी पहचान</div>
+          <div class="ht" style="font-size:clamp(11px,2.5vw,13px);color:rgba(255,255,255,.6);margin-top:3px;">हर पैकेट पर आपकी फोटो। पूरे देश में।</div>
+        </div>
+      </div>
+      <div class="a5" style="display:flex;align-items:flex-start;gap:11px;background:rgba(27,94,32,.2);border:1px solid rgba(67,160,71,.3);border-radius:13px;padding:12px;">
+        <div class="step-circle" style="font-size:18px;">🔒</div>
+        <div>
+          <div class="ht" style="font-size:clamp(13px,3vw,16px);font-weight:800;color:white;line-height:1.3;">जोखिम शून्य</div>
+          <div class="ht" style="font-size:clamp(11px,2.5vw,13px);color:rgba(255,255,255,.6);margin-top:3px;">फसल कम हुई तो अनुपातिक खरीद, पेनल्टी नहीं। क्वालिटी फेल तो Secondary Market — नुकसान शून्य।</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     स्लाइड 12 — ग्राहक के फायदे
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<div class="slide" id="s12">
+  <div class="sc">
+    <div class="section-pill sp-blue sd">🏠 आपके घर के लिए</div>
+    <div class="h-md a1"><span style="color:#90CAF9;">परिवार</span> के तीन बड़े फायदे</div>
+    <div style="text-align:center;" class="a2"><span style="font-size:clamp(44px,9vw,64px);">🛡️</span></div>
+    <div style="display:flex;flex-direction:column;gap:9px;width:100%;">
+      <div class="a3" style="display:flex;align-items:flex-start;gap:11px;background:rgba(13,71,161,.15);border:1px solid rgba(25,118,210,.3);border-radius:13px;padding:12px;">
+        <div class="step-circle" style="background:linear-gradient(135deg,#0D47A1,#1976D2);font-size:18px;">🥗</div>
+        <div>
+          <div class="ht" style="font-size:clamp(13px,3vw,16px);font-weight:800;color:white;line-height:1.3;">शुद्ध खाना — असली नंबरों के साथ</div>
+          <div class="ht" style="font-size:clamp(11px,2.5vw,13px);color:rgba(255,255,255,.6);margin-top:3px;">लैब रिपोर्ट खुद देखो। "ऑर्गेनिक" काफी नहीं।</div>
+        </div>
+      </div>
+      <div class="a4" style="display:flex;align-items:flex-start;gap:11px;background:rgba(13,71,161,.15);border:1px solid rgba(25,118,210,.3);border-radius:13px;padding:12px;">
+        <div class="step-circle" style="background:linear-gradient(135deg,#0D47A1,#1976D2);font-size:18px;">✅</div>
+        <div>
+          <div class="ht" style="font-size:clamp(13px,3vw,16px);font-weight:800;color:white;line-height:1.3;">जाँचा हुआ — दावे नहीं, सबूत</div>
+          <div class="ht" style="font-size:clamp(11px,2.5vw,13px);color:rgba(255,255,255,.6);margin-top:3px;">NABL प्रमाणित। हर बैच।</div>
+        </div>
+      </div>
+      <div class="a5" style="display:flex;align-items:flex-start;gap:11px;background:rgba(13,71,161,.15);border:1px solid rgba(25,118,210,.3);border-radius:13px;padding:12px;">
+        <div class="step-circle" style="background:linear-gradient(135deg,#0D47A1,#1976D2);font-size:18px;">📱</div>
+        <div>
+          <div class="ht" style="font-size:clamp(13px,3vw,16px);font-weight:800;color:white;line-height:1.3;">किसान का नाम, आपके हाथ में</div>
+          <div class="ht" style="font-size:clamp(11px,2.5vw,13px);color:rgba(255,255,255,.6);margin-top:3px;">एक QR स्कैन — किसान कौन, कहाँ, क्या उगाया।</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     स्लाइड 13 — जीत-जीत चक्र
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<div class="slide" id="s13">
+  <div class="sc">
+    <div class="section-pill sp-green sd">🔁 जीत-जीत चक्र</div>
+    <div class="h-md a1">यह एक चक्र है —<br><span style="color:#81C784;">सबको फायदा</span></div>
+    <div style="position:relative;width:min(240px,62vw);height:min(240px,62vw);" class="zi">
+      <svg viewBox="0 0 280 280" style="width:100%;height:100%;animation:spin 20s linear infinite;">
+        <defs>
+          <linearGradient id="lg1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#2E7D32" stop-opacity=".8"/>
+            <stop offset="50%" stop-color="#FB8C00" stop-opacity=".8"/>
+            <stop offset="100%" stop-color="#1976D2" stop-opacity=".8"/>
+          </linearGradient>
+        </defs>
+        <circle cx="140" cy="140" r="110" fill="none" stroke="url(#lg1)" stroke-width="2" stroke-dasharray="14 7" opacity=".6"/>
+        <circle cx="140" cy="30" r="18" fill="#2E7D32" opacity=".9"/>
+        <circle cx="250" cy="140" r="18" fill="#1976D2" opacity=".9"/>
+        <circle cx="140" cy="250" r="18" fill="#FB8C00" opacity=".9"/>
+        <circle cx="30" cy="140" r="18" fill="#388E3C" opacity=".9"/>
+      </svg>
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;">
+        <div class="ht" style="font-size:clamp(13px,3.5vw,17px);font-weight:800;color:white;line-height:1.3;">सबका<br>फायदा</div>
+      </div>
+      <div class="loop-label" style="top:-2px;left:50%;transform:translateX(-50%);">भरोसा</div>
+      <div class="loop-label" style="right:-28px;top:50%;transform:translateY(-50%);">माँग</div>
+      <div class="loop-label" style="bottom:-2px;left:50%;transform:translateX(-50%);">किसान</div>
+      <div class="loop-label" style="left:-32px;top:50%;transform:translateY(-50%);">कमाई</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;width:100%;" class="a3">
+      <div class="card card-green" style="text-align:center;padding:11px;">
+        <div style="font-size:22px;margin-bottom:5px;">🌾</div>
+        <div class="ht" style="font-size:clamp(11px,2.5vw,13px);color:#A5D6A7;font-weight:700;line-height:1.3;">किसान ज़्यादा<br>कमाता है</div>
+      </div>
+      <div class="card card-blue" style="text-align:center;padding:11px;">
+        <div style="font-size:22px;margin-bottom:5px;">🏠</div>
+        <div class="ht" style="font-size:clamp(11px,2.5vw,13px);color:#90CAF9;font-weight:700;line-height:1.3;">परिवार शुद्ध<br>खाना खाता है</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     स्लाइड 14 — लिखित गारंटी
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<div class="slide" id="s14">
+  <div class="sc">
+    <div class="section-pill sp-gold sd">📜 हमारा वादा</div>
+    <div class="h-md a1"><span style="color:#FFE082;">लिखित गारंटी</span><br>दोनों तरफ से</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;" class="a3">
+      <div style="border-radius:14px;padding:14px;background:linear-gradient(135deg,rgba(249,168,37,.18),rgba(251,140,0,.08));border:1.5px solid rgba(249,168,37,.4);">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid rgba(249,168,37,.2);">
+          <span style="font-size:18px;">🌾</span>
+          <div class="ht" style="font-size:clamp(11px,2.5vw,13px);font-weight:800;color:#FFE082;">किसान भाई</div>
+        </div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;">
+          <li style="display:flex;align-items:flex-start;gap:6px;font-family:'Tiro Devanagari Hindi',serif;font-size:clamp(11px,2.5vw,13px);color:rgba(255,255,255,.9);line-height:1.4;"><span style="color:#81C784;font-size:13px;flex-shrink:0;margin-top:1px;">✓</span>NBFC से 10% अग्रिम — सीधे खाते में*</li>
+          <li style="display:flex;align-items:flex-start;gap:6px;font-family:'Tiro Devanagari Hindi',serif;font-size:clamp(11px,2.5vw,13px);color:rgba(255,255,255,.9);line-height:1.4;"><span style="color:#81C784;font-size:13px;flex-shrink:0;margin-top:1px;">✓</span>मौसम की मार से फसल घटी? → अनुपातिक खरीद (Partial Fulfillment), पेनल्टी नहीं।</li>
+          <li style="display:flex;align-items:flex-start;gap:6px;font-family:'Tiro Devanagari Hindi',serif;font-size:clamp(11px,2.5vw,13px);color:rgba(255,255,255,.9);line-height:1.4;"><span style="color:#81C784;font-size:13px;flex-shrink:0;margin-top:1px;">✓</span>क्वालिटी फेल हुई? → माल वापस नहीं जाएगा, हम उसे Secondary Market में बेचकर उचित हिस्सा देंगे।</li>
+          <li style="display:flex;align-items:flex-start;gap:6px;font-family:'Tiro Devanagari Hindi',serif;font-size:clamp(11px,2.5vw,13px);color:rgba(255,255,255,.9);line-height:1.4;"><span style="color:#81C784;font-size:13px;flex-shrink:0;margin-top:1px;">✓</span>48 घंटे UPI भुगतान</li>
+        </ul>
+      </div>
+      <div style="border-radius:14px;padding:14px;background:linear-gradient(135deg,rgba(13,71,161,.25),rgba(25,118,210,.1));border:1.5px solid rgba(25,118,210,.4);">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid rgba(25,118,210,.2);">
+          <span style="font-size:18px;">🏠</span>
+          <div class="ht" style="font-size:clamp(11px,2.5vw,13px);font-weight:800;color:#90CAF9;">ग्राहक परिवार</div>
+        </div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;">
+          <li style="display:flex;align-items:flex-start;gap:6px;font-family:'Tiro Devanagari Hindi',serif;font-size:clamp(11px,2.5vw,13px);color:rgba(255,255,255,.9);line-height:1.4;"><span style="color:#81C784;font-size:13px;flex-shrink:0;margin-top:1px;">✓</span>NABL सर्टिफाइड हर क्लस्टर</li>
+          <li style="display:flex;align-items:flex-start;gap:6px;font-family:'Tiro Devanagari Hindi',serif;font-size:clamp(11px,2.5vw,13px);color:rgba(255,255,255,.9);line-height:1.4;"><span style="color:#81C784;font-size:13px;flex-shrink:0;margin-top:1px;">✓</span>किसान का नाम हर पैकेट</li>
+          <li style="display:flex;align-items:flex-start;gap:6px;font-family:'Tiro Devanagari Hindi',serif;font-size:clamp(11px,2.5vw,13px);color:rgba(255,255,255,.9);line-height:1.4;"><span style="color:#81C784;font-size:13px;flex-shrink:0;margin-top:1px;">✓</span>बैच फेल → बैकअप डिलीवरी, पूरा पैसा वापस</li>
+          <li style="display:flex;align-items:flex-start;gap:6px;font-family:'Tiro Devanagari Hindi',serif;font-size:clamp(11px,2.5vw,13px);color:rgba(255,255,255,.9);line-height:1.4;"><span style="color:#81C784;font-size:13px;flex-shrink:0;margin-top:1px;">✓</span>QR से खुद जाँचो — हर बार</li>
+        </ul>
+      </div>
+    </div>
+    <!-- NBFC note -->
+    <div class="a4" style="background:rgba(103,58,183,.15);border:1px solid rgba(149,117,205,.3);border-radius:12px;padding:11px 14px;width:100%;display:flex;align-items:flex-start;gap:9px;">
+      <span style="font-size:16px;flex-shrink:0;">💡</span>
+      <div class="ht" style="font-size:clamp(10px,2.2vw,12px);color:rgba(255,255,255,.6);line-height:1.5;">*10% अग्रिम हमारे NBFC साझेदार देते हैं — BharatPure subscription contract को collateral मानकर। प्लेटफ़ॉर्म बैंक नहीं है।</div>
+    </div>
+    <div class="a5" style="background:linear-gradient(135deg,rgba(249,168,37,.1),rgba(251,140,0,.05));border:1px solid rgba(249,168,37,.3);border-radius:12px;padding:12px 16px;text-align:center;width:100%;">
+      <div class="ht" style="font-size:clamp(13px,3vw,16px);font-weight:800;color:#FFE082;line-height:1.4;">कागज़ पर लिखा वादा — दोनों की सुरक्षा</div>
+    </div>
+  </div>
+</div>
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     स्लाइड 15 — भारत का सपना
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<div class="slide" id="s15">
+  <div class="sc">
+    <div class="section-pill sp-white sd">🇮🇳 हमारा सपना</div>
+    <div class="h-lg a1 shimmer-text">भारत का हर खाना<br>traceable होगा</div>
+    <div style="position:relative;width:min(180px,48vw);height:min(180px,48vw);" class="zi">
+      <svg viewBox="0 0 200 220" style="width:100%;height:100%;">
+        <path d="M100 10 L130 12 L155 25 L168 45 L172 70 L165 95 L175 115 L180 135 L168 158 L155 178 L142 200 L132 218 L120 208 L108 192 L95 178 L82 162 L68 142 L55 118 L45 95 L48 72 L56 52 L72 36 L88 22 Z" fill="rgba(27,94,32,.15)" stroke="rgba(67,160,71,.4)" stroke-width="1.5"/>
+        <circle cx="100" cy="60" r="5" fill="#81C784" opacity=".9"><animate attributeName="r" values="4;6;4" dur="2s" repeatCount="indefinite"/></circle>
+        <circle cx="140" cy="80" r="5" fill="#90CAF9" opacity=".8"><animate attributeName="r" values="4;6;4" dur="2.5s" repeatCount="indefinite"/></circle>
+        <circle cx="80" cy="110" r="5" fill="#81C784" opacity=".9"><animate attributeName="r" values="4;6;4" dur="1.8s" repeatCount="indefinite"/></circle>
+        <circle cx="120" cy="130" r="5" fill="#FFE082" opacity=".8"><animate attributeName="r" values="4;6;4" dur="3s" repeatCount="indefinite"/></circle>
+        <circle cx="95" cy="158" r="5" fill="#81C784" opacity=".9"><animate attributeName="r" values="4;6;4" dur="2.2s" repeatCount="indefinite"/></circle>
+        <line x1="100" y1="60" x2="140" y2="80" stroke="rgba(67,160,71,.25)" stroke-width="1"/>
+        <line x1="100" y1="60" x2="80" y2="110" stroke="rgba(67,160,71,.25)" stroke-width="1"/>
+        <line x1="80" y1="110" x2="95" y2="158" stroke="rgba(67,160,71,.25)" stroke-width="1"/>
+        <line x1="120" y1="130" x2="95" y2="158" stroke="rgba(67,160,71,.2)" stroke-width="1"/>
+      </svg>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px;width:100%;" class="a4">
+      <div style="text-align:center;padding:11px;background:rgba(27,94,32,.15);border:1px solid rgba(67,160,71,.25);border-radius:11px;">
+        <div style="font-family:'Baloo 2',cursive;font-size:clamp(18px,5vw,28px);font-weight:800;color:#81C784;">1L+</div>
+        <div class="ht" style="font-size:clamp(9px,2vw,11px);color:rgba(255,255,255,.5);margin-top:2px;">किसान</div>
+      </div>
+      <div style="text-align:center;padding:11px;background:rgba(13,71,161,.15);border:1px solid rgba(25,118,210,.25);border-radius:11px;">
+        <div style="font-family:'Baloo 2',cursive;font-size:clamp(18px,5vw,28px);font-weight:800;color:#90CAF9;">500+</div>
+        <div class="ht" style="font-size:clamp(9px,2vw,11px);color:rgba(255,255,255,.5);margin-top:2px;">जिले</div>
+      </div>
+      <div style="text-align:center;padding:11px;background:rgba(249,168,37,.1);border:1px solid rgba(249,168,37,.2);border-radius:11px;">
+        <div style="font-family:'Baloo 2',cursive;font-size:clamp(18px,5vw,28px);font-weight:800;color:#FFE082;">∞</div>
+        <div class="ht" style="font-size:clamp(9px,2vw,11px);color:rgba(255,255,255,.5);margin-top:2px;">भरोसा</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     स्लाइड 16 — जुड़ो
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<div class="slide" id="s16">
+  <div class="sc" style="gap:10px;">
+    <!-- Headline -->
+    <div class="a1" style="text-align:center;">
+      <div class="h-lg shimmer-text" style="line-height:1.1;">अब जुड़ो</div>
+      <div class="ht" style="font-size:clamp(12px,2.6vw,14px);color:rgba(255,255,255,.55);margin-top:3px;">भारत का सबसे विश्वसनीय कृषि नेटवर्क</div>
+    </div>
+
+    <!-- Farmer CTA -->
+    <div class="a2" style="width:100%;border-radius:16px;padding:14px;background:linear-gradient(135deg,rgba(27,94,32,.55),rgba(56,142,60,.25));border:2px solid rgba(67,160,71,.6);animation:glow 3s ease-in-out infinite;position:relative;overflow:hidden;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:42px;height:42px;border-radius:12px;background:rgba(27,94,32,.7);border:1.5px solid rgba(67,160,71,.5);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🌾</div>
+        <div style="flex:1;">
+          <div class="ht" style="font-size:clamp(14px,3.5vw,17px);font-weight:800;color:white;line-height:1.2;">किसान भाई — पंजीकरण करें</div>
+          <div class="ht" style="font-size:clamp(11px,2.5vw,13px);color:#A5D6A7;margin-top:3px;">पहले <strong style="color:#FFE082;">100 किसानों</strong> को ₹1,000 स्वागत बोनस</div>
+        </div>
+      </div>
+      <a href="https://wa.me/919352398437?text=किसान" style="text-decoration:none;display:block;margin-top:10px;">
+        <div style="display:flex;align-items:center;gap:8px;background:rgba(0,0,0,.3);border-radius:9px;padding:8px 11px;">
+          <span style="font-size:16px;">📲</span>
+          <span class="ht" style="font-size:clamp(11px,2.5vw,13px);color:rgba(255,255,255,.85);font-weight:700;">WhatsApp पर "किसान" टाइप करें → 9352398437</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- Consumer CTA -->
+    <div class="a3" style="width:100%;border-radius:16px;padding:14px;background:linear-gradient(135deg,rgba(13,71,161,.4),rgba(25,118,210,.2));border:2px solid rgba(25,118,210,.45);box-shadow:0 4px 24px rgba(13,71,161,.2);">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:42px;height:42px;border-radius:12px;background:rgba(13,71,161,.6);border:1.5px solid rgba(25,118,210,.5);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🏠</div>
+        <div style="flex:1;">
+          <div class="ht" style="font-size:clamp(14px,3.5vw,17px);font-weight:800;color:white;line-height:1.2;">ग्राहक — निःशुल्क ट्रायल लें</div>
+          <div class="ht" style="font-size:clamp(11px,2.5vw,13px);color:#90CAF9;margin-top:3px;"><strong style="color:#FFE082;">500g ट्रायल पैक</strong> · NABL प्रमाणित · किसान पहचान सहित</div>
+        </div>
+      </div>
+      <div style="margin-top:10px;display:flex;align-items:center;gap:8px;background:rgba(0,0,0,.3);border-radius:9px;padding:8px 11px;">
+        <span style="font-size:16px;">🌐</span>
+        <span class="ht" style="font-size:clamp(11px,2.5vw,13px);color:rgba(255,255,255,.85);font-weight:700;letter-spacing:.3px;">bharatpure.com</span>
+      </div>
+    </div>
+
+    <!-- Contact + tagline combined -->
+    <div class="a4" style="width:100%;border-radius:13px;padding:11px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:space-between;gap:8px;">
+      <a href="https://wa.me/919352398437" style="text-decoration:none; color:inherit;">
+        <div>
+          <div style="font-family:'Baloo 2',cursive;font-size:clamp(15px,3.8vw,19px);font-weight:800;color:white;">📞 9352398437</div>
+          <div class="ht" style="font-size:10px;color:rgba(255,255,255,.4);">bharatpure.com · प्रातः 8 — रात्रि 9</div>
+        </div>
+      </a>
+      <div style="display:flex;gap:7px;">
+        <a href="https://wa.me/919352398437" style="text-decoration:none;">
+          <div style="background:rgba(37,211,102,.18);border:1px solid rgba(37,211,102,.35);border-radius:100px;padding:5px 13px;font-size:12px;font-weight:700;color:#25d366;">WhatsApp</div>
+        </a>
+        <a href="https://t.me/petrol4u" style="text-decoration:none;">
+          <div style="background:rgba(0,136,204,.18);border:1px solid rgba(0,136,204,.35);border-radius:100px;padding:5px 13px;font-size:12px;font-weight:700;color:#6DB7E8;">petrol4u</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="a5" style="text-align:center;">
+      <div class="ht shimmer-text" style="font-size:clamp(14px,3.5vw,18px);font-weight:800;line-height:1.45;">किसान के लिए बेहतर · परिवार के लिए सुरक्षित · भारत के लिए गर्व</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     ★ नई स्लाइड 17 — सब्सक्रिप्शन: आपका नाम = आपकी ब्रांड
+═══════════════════════════════════════════════════ -->
+<div class="slide" id="s17">
+  <div class="sc">
+    <div class="section-pill sp-purple sd">🆕 नया — सब्सक्रिप्शन मॉडल</div>
+    <div class="h-md a1">दलाल की ज़रूरत नहीं —<br><span style="color:#CE93D8;">आपका नाम ही ब्रांड है</span></div>
+
+    <!-- SVG: farmer-subscriber web -->
+    <div class="zi" style="width:min(220px,58vw);height:min(140px,36vw);">
+      <svg viewBox="0 0 300 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
+        <defs>
+          <radialGradient id="pg" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#9C27B0" stop-opacity="0.2"/>
+            <stop offset="100%" stop-color="#9C27B0" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <circle cx="150" cy="80" r="70" fill="url(#pg)"/>
+        <!-- center farmer -->
+        <circle cx="150" cy="80" r="26" fill="rgba(103,58,183,.3)" stroke="#9C27B0" stroke-width="1.5"/>
+        <text x="150" y="87" text-anchor="middle" font-size="18">🌾</text>
+        <!-- pulse ring -->
+        <circle cx="150" cy="80" r="30" fill="none" stroke="#CE93D8" stroke-width="0.8" opacity="0.4">
+          <animate attributeName="r" values="30;55;30" dur="3s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.4;0;0.4" dur="3s" repeatCount="indefinite"/>
+        </circle>
+        <!-- subscriber nodes -->
+        <circle cx="150" cy="18" r="14" fill="rgba(67,160,71,.2)" stroke="#81C784" stroke-width="1.2"/>
+        <text x="150" y="23" text-anchor="middle" font-size="10">🏠</text>
+        <line x1="150" y1="32" x2="150" y2="54" stroke="#81C784" stroke-width="0.8" stroke-dasharray="3 3" opacity="0.6"/>
+
+        <circle cx="230" cy="48" r="14" fill="rgba(67,160,71,.2)" stroke="#81C784" stroke-width="1.2"/>
+        <text x="230" y="53" text-anchor="middle" font-size="10">🏠</text>
+        <line x1="218" y1="57" x2="175" y2="68" stroke="#81C784" stroke-width="0.8" stroke-dasharray="3 3" opacity="0.6"/>
+
+        <circle cx="252" cy="112" r="14" fill="rgba(67,160,71,.2)" stroke="#81C784" stroke-width="1.2"/>
+        <text x="252" y="117" text-anchor="middle" font-size="10">🏠</text>
+        <line x1="239" y1="107" x2="176" y2="92" stroke="#81C784" stroke-width="0.8" stroke-dasharray="3 3" opacity="0.6"/>
+
+        <circle cx="150" cy="144" r="14" fill="rgba(67,160,71,.2)" stroke="#81C784" stroke-width="1.2"/>
+        <text x="150" y="149" text-anchor="middle" font-size="10">🏠</text>
+        <line x1="150" y1="130" x2="150" y2="106" stroke="#81C784" stroke-width="0.8" stroke-dasharray="3 3" opacity="0.6"/>
+
+        <circle cx="50" cy="112" r="14" fill="rgba(67,160,71,.2)" stroke="#81C784" stroke-width="1.2"/>
+        <text x="50" y="117" text-anchor="middle" font-size="10">🏠</text>
+        <line x1="63" y1="107" x2="124" y2="92" stroke="#81C784" stroke-width="0.8" stroke-dasharray="3 3" opacity="0.6"/>
+
+        <circle cx="70" cy="48" r="14" fill="rgba(67,160,71,.2)" stroke="#81C784" stroke-width="1.2"/>
+        <text x="70" y="53" text-anchor="middle" font-size="10">🏠</text>
+        <line x1="82" y1="57" x2="125" y2="68" stroke="#81C784" stroke-width="0.8" stroke-dasharray="3 3" opacity="0.6"/>
+      </svg>
+    </div>
+
+    <div class="a3" style="display:flex;flex-direction:column;gap:9px;width:100%;">
+      <div style="display:flex;align-items:flex-start;gap:10px;background:rgba(103,58,183,.15);border:1px solid rgba(149,117,205,.3);border-radius:12px;padding:12px;">
+        <span style="font-size:22px;flex-shrink:0;">🔁</span>
+        <div>
+          <div class="ht" style="font-size:clamp(13px,3vw,16px);font-weight:800;color:white;line-height:1.3;">हर महीने पक्का ऑर्डर</div>
+          <div class="ht" style="font-size:clamp(11px,2.5vw,13px);color:rgba(255,255,255,.6);margin-top:3px;">निश्चित मांग = बीज डालने से पहले ही आय सुनिश्चित</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:10px;background:rgba(103,58,183,.15);border:1px solid rgba(149,117,205,.3);border-radius:12px;padding:12px;">
+        <span style="font-size:22px;flex-shrink:0;">⭐</span>
+        <div>
+          <div class="ht" style="font-size:clamp(13px,3vw,16px);font-weight:800;color:white;line-height:1.3;">रेटिंग = आपका लाइसेंस — पर असली रेटिंग</div>
+          <div class="ht" style="font-size:clamp(11px,2.5vw,13px);color:rgba(255,255,255,.6);margin-top:3px;">रेटिंग = आपका लाइसेंस। लेकिन फेक रिव्यू नहीं चलेंगे। 2 साल पुराने ग्राहक की रेटिंग का वज़न नए ग्राहक से 10 गुना ज़्यादा होगा। हमारा सिस्टम असामान्य रिव्यू को तुरंत ब्लॉक करता है।</div>
+        </div>
+      </div>
+    </div>
+    <div class="a4" style="background:rgba(249,168,37,.12);border:1px solid rgba(249,168,37,.3);border-radius:12px;padding:12px 14px;width:100%;text-align:center;">
+      <div class="ht" style="font-size:clamp(13px,3vw,16px);font-weight:800;color:#FFE082;line-height:1.4;">"मंडी में नाम नहीं था — भारतPure पर <span style="color:white;">पूरे देश में पहचान</span>"</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     ★ नई स्लाइड 18 — सब्सक्रिप्शन कैसे काम करता है
+═══════════════════════════════════════════════════ -->
+<div class="slide" id="s18">
+  <div class="sc">
+    <div class="section-pill sp-gold sd">सब्सक्रिप्शन — काम ऐसे होता है</div>
+    <div class="h-md a1">ग्राहक <span style="color:#FFE082;">किसान को</span> hire करता है</div>
+    <div style="display:flex;flex-direction:column;gap:0;width:100%;" class="a2">
+      <div style="display:flex;align-items:flex-start;gap:10px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.07);">
+        <div style="width:30px;height:30px;border-radius:50%;background:rgba(249,168,37,.2);border:1.5px solid #F9A825;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#FFE082;flex-shrink:0;">1</div>
+        <div>
+          <div class="ht" style="font-size:clamp(13px,3vw,15px);font-weight:700;color:white;">शुरुआत में: प्लेटफ़ॉर्म पहला खरीददार</div>
+          <div class="ht" style="font-size:clamp(11px,2.5vw,12px);color:rgba(255,255,255,.55);margin-top:2px;">पहले 1–2 सीज़न BharatPure खुद inventory लेता है — subscribers बनाने तक। किसान को risk नहीं।</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:10px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.07);">
+        <div style="width:30px;height:30px;border-radius:50%;background:rgba(249,168,37,.2);border:1.5px solid #F9A825;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#FFE082;flex-shrink:0;">2</div>
+        <div>
+          <div class="ht" style="font-size:clamp(13px,3vw,15px);font-weight:700;color:white;">ग्राहक 3+ बार खरीदे → सब्सक्रिप्शन</div>
+          <div class="ht" style="font-size:clamp(11px,2.5vw,12px);color:rgba(255,255,255,.55);margin-top:2px;">ऐप पूछे: "इस किसान की सब्सक्रिप्शन लोगे?" करार बनता है।</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:10px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.07);">
+        <div style="width:30px;height:30px;border-radius:50%;background:rgba(249,168,37,.2);border:1.5px solid #F9A825;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#FFE082;flex-shrink:0;">3</div>
+        <div>
+          <div class="ht" style="font-size:clamp(13px,3vw,15px);font-weight:700;color:white;">किसान को पक्के ग्राहक मिलते हैं</div>
+          <div class="ht" style="font-size:clamp(11px,2.5vw,12px);color:rgba(255,255,255,.55);margin-top:2px;">बुआई से पहले इनकम पक्की। NBFC अग्रिम। लैब रिपोर्ट pass → UPI 48 घंटे।</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:10px;padding:11px 0;">
+        <div style="width:30px;height:30px;border-radius:50%;background:rgba(249,168,37,.2);border:1.5px solid #F9A825;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#FFE082;flex-shrink:0;">4</div>
+        <div>
+          <div class="ht" style="font-size:clamp(13px,3vw,15px);font-weight:700;color:white;">dynamic pricing — स्थिर नहीं, सही</div>
+          <div class="ht" style="font-size:clamp(11px,2.5vw,12px);color:rgba(255,255,255,.55);margin-top:2px;">डायनामिक प्राइसिंग — अगर अचानक मंडी का भाव 20% उछलता है, तो हमारा सिस्टम आपका भाव भी बढ़ा देगा। आपको कॉन्ट्रैक्ट तोड़कर दलाल के पास जाने की कोई ज़रूरत नहीं।</div>
+        </div>
+      </div>
+    </div>
+    <div class="a3" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;width:100%;">
+      <div class="card card-gold" style="text-align:center;padding:11px;">
+        <div style="font-family:'Baloo 2',cursive;font-size:clamp(18px,4.5vw,26px);font-weight:800;color:#FFE082;">₹0</div>
+        <div class="ht" style="font-size:10px;color:rgba(255,255,255,.5);margin-top:3px;">मार्केटिंग खर्च</div>
+      </div>
+      <div class="card card-gold" style="text-align:center;padding:11px;">
+        <div style="font-family:'Baloo 2',cursive;font-size:clamp(18px,4.5vw,26px);font-weight:800;color:#FFE082;">15%</div>
+        <div class="ht" style="font-size:10px;color:rgba(255,255,255,.5);margin-top:3px;">प्लेटफॉर्म शुल्क</div>
+      </div>
+      <div class="card card-gold" style="text-align:center;padding:11px;">
+        <div style="font-family:'Baloo 2',cursive;font-size:clamp(18px,4.5vw,26px);font-weight:800;color:#FFE082;">2.3×</div>
+        <div class="ht" style="font-size:10px;color:rgba(255,255,255,.5);margin-top:3px;">मंडी से ज़्यादा</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     ★ नई स्लाइड 19 — फेलओवर सिस्टम
+═══════════════════════════════════════════════════ -->
+<div class="slide" id="s19">
+  <div class="sc">
+    <div class="section-pill sp-green sd">🔄 क्लस्टर फेलओवर — ज़रूरी सुरक्षा</div>
+    <div class="h-md a1">फसल खराब हो जाए?<br><span style="color:#81C784;">ग्राहक को फर्क नहीं पड़ता</span></div>
+    <div class="ht a2" style="font-size:clamp(12px,2.8vw,15px);color:rgba(255,255,255,.6);text-align:center;line-height:1.5;">
+      ग्राहक सिर्फ एक किसान को नहीं — <strong style="color:white;">"बिहार शहद क्लस्टर"</strong> को subscribe करता है
+    </div>
+    <div style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:14px;width:100%;" class="a3">
+      <div class="ht" style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:14px;font-weight:700;">सक्रिय क्लस्टर — बिहार शहद</div>
+      <div class="cluster-row">
+        <div class="cluster-badge primary">🍯</div>
+        <div style="flex:1;">
+          <div class="ht" style="font-size:clamp(12px,2.8vw,14px);font-weight:700;color:white;">प्राथमिक किसान</div>
+          <div class="ht" style="font-size:11px;color:rgba(255,255,255,.45);">मुज़फ्फरपुर · 4.9★ · 840 बैच verified</div>
+        </div>
+        <span class="cluster-status cs-active">प्राथमिक</span>
+      </div>
+      <div style="font-size:11px;color:rgba(255,255,255,.3);text-align:center;padding:5px 0;" class="ht">↓ अगर प्राथमिक किसान का बैच लैब फेल हो</div>
+      <div class="cluster-row">
+        <div class="cluster-badge backup">🍯</div>
+        <div style="flex:1;">
+          <div class="ht" style="font-size:clamp(12px,2.8vw,14px);font-weight:700;color:white;">बैकअप किसान 1</div>
+          <div class="ht" style="font-size:11px;color:rgba(255,255,255,.45);">सीतामढ़ी · 4.7★ · 420 बैच verified</div>
+        </div>
+        <span class="cluster-status cs-ready">बैकअप 1</span>
+      </div>
+      <div class="cluster-row" style="margin-top:6px;">
+        <div class="cluster-badge inactive">🍯</div>
+        <div style="flex:1;">
+          <div class="ht" style="font-size:clamp(12px,2.8vw,14px);font-weight:700;color:rgba(255,255,255,.5);">बैकअप किसान 2</div>
+          <div class="ht" style="font-size:11px;color:rgba(255,255,255,.3);">दरभंगा · 4.6★ · 310 बैच verified</div>
+        </div>
+        <span class="cluster-status cs-queue">बैकअप 2</span>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;width:100%;" class="a4">
+      <div class="card card-green" style="text-align:center;padding:12px;">
+        <div style="font-size:20px;margin-bottom:5px;">✅</div>
+        <div class="ht" style="font-size:clamp(11px,2.5vw,13px);color:#A5D6A7;font-weight:700;line-height:1.3;">ग्राहक को डिलीवरी<br>समय पर मिलती है</div>
+      </div>
+      <div class="card card-gold" style="text-align:center;padding:12px;">
+        <div style="font-size:20px;margin-bottom:5px;">💰</div>
+        <div class="ht" style="font-size:clamp(11px,2.5vw,13px);color:#FFE082;font-weight:700;line-height:1.3;">किसान को referral<br>credit मिलता है</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     ★ नई स्लाइड 20 — प्लेटफ़ॉर्म सुरक्षा से सुरक्षा
+═══════════════════════════════════════════════════ -->
+<div class="slide" id="s20">
+  <div class="sc">
+    <div class="section-pill sp-red sd">⚠️ सीधी बात — WhatsApp वाला खतरा</div>
+    <div class="h-md a1">ग्राहक सीधे किसान को<br><span style="color:#EF9A9A;">WhatsApp क्यों न करे?</span></div>
+    <div class="ht a2" style="font-size:clamp(12px,2.8vw,15px);color:rgba(255,255,255,.55);text-align:center;line-height:1.5;">
+      यह सबसे बड़ा खतरा है। इसलिए हमने ऐसी चीज़ें बनाई हैं जो <strong style="color:white;">अकेला किसान नहीं दे सकता।</strong>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;width:100%;" class="a3">
+      <div style="display:flex;align-items:flex-start;gap:10px;background:rgba(27,94,32,.18);border:1px solid rgba(67,160,71,.3);border-radius:12px;padding:11px 13px;">
+        <span style="font-size:20px;flex-shrink:0;">🔬</span>
+        <div>
+          <div class="ht" style="font-size:clamp(12px,2.8vw,15px);font-weight:700;color:white;">NABL क्लस्टर जाँच + 100% वापसी</div>
+          <div class="ht" style="font-size:clamp(10px,2.3vw,12px);color:rgba(255,255,255,.55);margin-top:2px;">बैच फेल हो → पूरा पैसा वापस या बैकअप डिलीवरी। एक किसान यह गारंटी नहीं दे सकता।</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:10px;background:rgba(27,94,32,.18);border:1px solid rgba(67,160,71,.3);border-radius:12px;padding:11px 13px;">
+        <span style="font-size:20px;flex-shrink:0;">🚛</span>
+        <div>
+          <div class="ht" style="font-size:clamp(12px,2.8vw,15px);font-weight:700;color:white;">स्मार्ट लॉजिस्टिक्स — उत्पाद अनुसार</div>
+          <div class="ht" style="font-size:clamp(10px,2.3vw,12px);color:rgba(255,255,255,.55);margin-top:2px;">अनाज/दालें ट्रकों से शहर के डार्क स्टोर (Dark Store) तक पहुँचेंगी। केवल घी/शहद जैसी नाज़ुक चीज़ों के लिए कोल्ड चेन। हम हर पैकेट को 1000 किमी दूर नहीं भेजते — क्लस्टर से शहर तक 'थोक (Bulk)' भेजते हैं, जिससे डिलीवरी सस्ती रहती है।</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:10px;background:rgba(27,94,32,.18);border:1px solid rgba(67,160,71,.3);border-radius:12px;padding:11px 13px;">
+        <span style="font-size:20px;flex-shrink:0;">📡</span>
+        <div>
+          <div class="ht" style="font-size:clamp(12px,2.8vw,15px);font-weight:700;color:white;">ऑफ़लाइन-फर्स्ट ऐप (बिना इंटरनेट के काम)</div>
+          <div class="ht" style="font-size:clamp(10px,2.3vw,12px);color:rgba(255,255,255,.55);margin-top:2px;">खेत में नेटवर्क नहीं है? कोई बात नहीं। ऐप में डेटा डालें, नेटवर्क आते ही सिस्टम अपने आप सिंक (Sync) कर लेगा। WhatsApp में यह सुविधा नहीं है।</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:10px;background:rgba(27,94,32,.18);border:1px solid rgba(67,160,71,.3);border-radius:12px;padding:11px 13px;">
+        <span style="font-size:20px;flex-shrink:0;">🔄</span>
+        <div>
+          <div class="ht" style="font-size:clamp(12px,2.8vw,15px);font-weight:700;color:white;">क्लस्टर सुरक्षा</div>
+          <div class="ht" style="font-size:clamp(10px,2.3vw,12px);color:rgba(255,255,255,.55);margin-top:2px;">WhatsApp पर जाएँ — फसल खराब हुई तो कुछ नहीं मिलता। यहाँ 3 backup farmers हमेशा तैयार।</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:10px;background:rgba(249,168,37,.12);border:1px solid rgba(249,168,37,.25);border-radius:12px;padding:11px 13px;">
+        <span style="font-size:20px;flex-shrink:0;">📈</span>
+        <div>
+          <div class="ht" style="font-size:clamp(12px,2.8vw,15px);font-weight:700;color:#FFE082;">सस्ता लोन — सिर्फ platform पर</div>
+          <div class="ht" style="font-size:clamp(10px,2.3vw,12px);color:rgba(255,255,255,.55);margin-top:2px;">भारतPure पर subscription history = credit score। Platform छोड़ें → NBFC लोन भी जाए।</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     ★ नई स्लाइड 21 — तीन स्तर (Tiers)
+═══════════════════════════════════════════════════ -->
+<div class="slide" id="s21">
+  <div class="sc">
+    <div class="section-pill sp-gold sd">सब्सक्रिप्शन — तीन स्तर</div>
+    <div class="h-md a1">हर जेब के लिए —<br><span style="color:#FFE082;">एक ही रीढ़: भरोसा</span></div>
+    <div style="display:flex;flex-direction:column;gap:10px;width:100%;" class="a2">
+      <!-- Standard -->
+      <div class="card card-green" style="padding:14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+          <div class="section-pill sp-green" style="padding:3px 12px;font-size:10px;">मानक</div>
+          <span style="font-size:18px;">🌾</span>
+        </div>
+        <div class="ht" style="font-size:clamp(14px,3.2vw,17px);font-weight:800;color:white;margin-bottom:6px;">क्षेत्र सब्सक्रिप्शन</div>
+        <div class="ht" style="font-size:clamp(11px,2.5vw,13px);color:rgba(255,255,255,.65);line-height:1.5;">चुने हुए इलाके का सबसे अच्छा किसान। NABL रिपोर्ट हर बैच। क्लस्टर सुरक्षा।</div>
+      </div>
+      <!-- Prime -->
+      <div style="border-radius:14px;padding:14px;background:rgba(249,168,37,.12);border:2px solid rgba(249,168,37,.5);position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#C47C1A,#F5C842);"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+          <div class="section-pill sp-gold" style="padding:3px 12px;font-size:10px;">★ प्राइम</div>
+          <span style="font-size:18px;">👨‍🌾</span>
+        </div>
+        <div class="ht" style="font-size:clamp(14px,3.2vw,17px);font-weight:800;color:white;margin-bottom:6px;">नाम वाला किसान</div>
+        <div class="ht" style="font-size:clamp(11px,2.5vw,13px);color:rgba(255,255,255,.65);line-height:1.5;">सीधे किसान से। खेत की live अपडेट। सीमित मौसमी फसल में पहला हक।</div>
+      </div>
+      <!-- Legacy -->
+      <div class="card card-dark" style="padding:14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+          <div class="section-pill sp-white" style="padding:3px 12px;font-size:10px;">लेगेसी</div>
+          <span style="font-size:18px;">🤝</span>
+        </div>
+        <div class="ht" style="font-size:clamp(14px,3.2vw,17px);font-weight:800;color:white;margin-bottom:6px;">खेत भागीदार</div>
+        <div class="ht" style="font-size:clamp(11px,2.5vw,13px);color:rgba(255,255,255,.65);line-height:1.5;">पूरे सीज़न का allocation पहले से खरीदो। पैकेट पर आपका नाम।</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     ★ नई स्लाइड 22 — किसान को सीधी बात
+═══════════════════════════════════════════════════ -->
+<div class="slide" id="s22">
+  <div class="sc" style="gap:10px;">
+    <div class="section-pill sp-green sd">🌾 किसान भाई — सीधी बात</div>
+    <div class="h-md a1 shimmer-text" style="font-size:clamp(18px,4.5vw,30px);">मंडी में अनजान —<br>यहाँ पहचान बनेगी</div>
+
+    <div class="a2" style="background:rgba(27,94,32,.2);border-left:3px solid #81C784;padding:12px 14px;border-radius:0 12px 12px 0;width:100%;">
+      <div class="ht" style="font-size:clamp(12px,2.8vw,15px);font-style:italic;color:rgba(255,255,255,.9);line-height:1.55;">
+        "पक्के ग्राहकों का करार हो तो बीज बोने से पहले कमाई सुनिश्चित। रेटिंग आपकी राष्ट्रीय पहचान है। एक घटिया बैच — सब दिखता है। यही इस <span style="color:#81C784;">प्रणाली की ताकत है।</span>"
+      </div>
+    </div>
+
+    <!-- Income comparison — compact SVG -->
+    <div class="a3" style="width:100%;">
+      <svg viewBox="0 0 480 100" xmlns="http://www.w3.org/2000/svg" style="width:100%;border-radius:10px;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.07);">
+        <text x="16" y="18" font-family="Mukta,sans-serif" font-size="8" fill="rgba(255,255,255,0.3)" letter-spacing="1.2">आय तुलना — निश्चित सब्सक्राइबर</text>
+        <rect x="16" y="26" width="130" height="24" rx="4" fill="rgba(184,64,64,0.2)" stroke="rgba(184,64,64,0.4)" stroke-width="1"/>
+        <text x="24" y="43" font-family="Tiro Devanagari Hindi,serif" font-size="11" fill="#EF9A9A" font-weight="700">मंडी: ₹4,200/क्विंटल</text>
+        <rect x="16" y="58" width="320" height="24" rx="4" fill="rgba(67,160,71,0.2)" stroke="rgba(109,184,122,0.4)" stroke-width="1"/>
+        <text x="24" y="75" font-family="Tiro Devanagari Hindi,serif" font-size="11" fill="#81C784" font-weight="700">भारतPure: ₹9,800/क्विंटल (15% शुल्क कटौती)</text>
+        <text x="348" y="72" font-family="Baloo 2,cursive" font-size="22" fill="#F9A825" font-weight="800">2.3×</text>
+        <text x="349" y="84" font-family="Mukta,sans-serif" font-size="8" fill="rgba(249,168,37,0.6)">अधिक</text>
+      </svg>
+    </div>
+
+    <!-- 2 benefit chips -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;width:100%;" class="a4">
+      <div class="card card-green" style="text-align:center;padding:10px;">
+        <div style="font-size:20px;margin-bottom:4px;">💳</div>
+        <div class="ht" style="font-size:clamp(11px,2.5vw,13px);color:#A5D6A7;font-weight:700;line-height:1.3;">भुगतान इतिहास से<br>सस्ता कृषि ऋण</div>
+      </div>
+      <div class="card card-green" style="text-align:center;padding:10px;">
+        <div style="font-size:20px;margin-bottom:4px;">📦</div>
+        <div class="ht" style="font-size:clamp(11px,2.5vw,13px);color:#A5D6A7;font-weight:700;line-height:1.3;">उत्पादन लक्ष्य<br>पहले से निर्धारित</div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="a5" style="text-align:center;padding:12px 14px;background:rgba(183,28,28,.2);border:1.5px solid rgba(229,57,53,.4);border-radius:13px;width:100%;">
+      <div class="ht" style="font-size:clamp(12px,2.8vw,14px);font-weight:800;color:#EF9A9A;line-height:1.3;">⚠️ चेतावनी</div>
+      <div class="ht" style="font-size:clamp(11px,2.5vw,13px);color:rgba(255,255,255,.7);margin-top:4px;line-height:1.5;">अगर मंडी के लालच में कॉन्ट्रैक्ट तोड़ा, तो क्लस्टर रेटिंग शून्य हो जाएगी और भविष्य के NBFC लोन तुरंत बंद। सिस्टम ईमानदार किसानों के लिए है।</div>
+    </div>
+    <!-- CTA -->
+    <a href="https://wa.me/919352398437?text=पंजीकरण" style="text-decoration:none;display:block;width:100%;">
+      <div class="a5" style="text-align:center;padding:12px 14px;background:rgba(27,94,32,.3);border:1.5px solid rgba(67,160,71,.5);border-radius:13px;animation:glow 3s ease-in-out infinite;width:100%;">
+        <div class="ht" style="font-size:clamp(14px,3.5vw,17px);font-weight:800;color:white;line-height:1.3;">अभी पंजीकरण करें</div>
+        <div class="ht" style="font-size:clamp(11px,2.5vw,13px);color:rgba(255,255,255,.6);margin-top:3px;">पहले 100 किसानों को ₹1,000 स्वागत बोनस · WhatsApp: 9352398437</div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     ★ नई स्लाइड 23 — प्राकृतिक भिन्नता = शुद्धता का प्रमाण
+═══════════════════════════════════════════════════ -->
+<div class="slide" id="s23" style="background:radial-gradient(ellipse at 50% 40%,rgba(249,168,37,.1),transparent 60%),#060400;">
+  <div class="sc" style="gap:12px;">
+    <div class="section-pill sp-gold sd">🌿 ग्राहक के लिए एक ज़रूरी बात</div>
+    <div class="h-md a1" style="font-size:clamp(18px,4.5vw,28px);">हर बैच थोड़ा <span style="color:#FFE082;">अलग दिखेगा</span><br>— यही असलियत है</div>
+
+    <div class="a2" style="display:flex;gap:10px;width:100%;">
+      <div style="flex:1;border-radius:12px;padding:12px;background:rgba(183,28,28,.15);border:1px solid rgba(229,57,53,.3);text-align:center;">
+        <div style="font-size:clamp(28px,7vw,44px);">🏭</div>
+        <div class="ht" style="font-size:clamp(11px,2.5vw,13px);font-weight:700;color:#EF9A9A;margin-top:6px;line-height:1.3;">FMCG ब्रांड</div>
+        <div class="ht" style="font-size:clamp(9px,2vw,11px);color:rgba(255,255,255,.45);margin-top:4px;line-height:1.4;">हर पैकेट एक जैसा — क्योंकि additives, bleach, blending</div>
+      </div>
+      <div style="flex:1;border-radius:12px;padding:12px;background:rgba(27,94,32,.25);border:2px solid rgba(67,160,71,.5);text-align:center;">
+        <div style="font-size:clamp(28px,7vw,44px);">🌾</div>
+        <div class="ht" style="font-size:clamp(11px,2.5vw,13px);font-weight:700;color:#A5D6A7;margin-top:6px;line-height:1.3;">भारतPure</div>
+        <div class="ht" style="font-size:clamp(9px,2vw,11px);color:rgba(255,255,255,.45);margin-top:4px;line-height:1.4;">थोड़ा अलग रंग-बनावट — क्योंकि असली, single-origin</div>
+      </div>
+    </div>
+
+    <div class="a3" style="background:rgba(249,168,37,.1);border:1px solid rgba(249,168,37,.3);border-radius:13px;padding:13px 15px;width:100%;">
+      <div style="display:flex;align-items:flex-start;gap:9px;">
+        <span style="font-size:20px;flex-shrink:0;">💡</span>
+        <div>
+          <div class="ht" style="font-size:clamp(12px,2.8vw,15px);font-weight:800;color:#FFE082;line-height:1.3;">Batch R-42 का रंग Batch S-07 से थोड़ा गहरा है?</div>
+          <div class="ht" style="font-size:clamp(11px,2.5vw,13px);color:rgba(255,255,255,.7);margin-top:5px;line-height:1.5;">यह कमी नहीं — यह <strong style="color:white;">राजकोट की मिट्टी और मई की धूप</strong> का असर है। ऐप पर "इस बैच के बारे में" खोलें — पूरी जानकारी मिलेगी।</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;width:100%;" class="a4">
+      <div class="card card-green" style="text-align:center;padding:10px;">
+        <div style="font-size:18px;margin-bottom:4px;">📊</div>
+        <div class="ht" style="font-size:clamp(10px,2.3vw,12px);color:#A5D6A7;font-weight:700;line-height:1.3;">NABL नंबर वही रहते हैं — रंग बदले, गुण नहीं</div>
+      </div>
+      <div class="card card-gold" style="text-align:center;padding:10px;">
+        <div style="font-size:18px;margin-bottom:4px;">🎓</div>
+        <div class="ht" style="font-size:clamp(10px,2.3vw,12px);color:#FFE082;font-weight:700;line-height:1.3;">ऐप हर बैच की कहानी बताता है — पहले से</div>
+      </div>
+    </div>
+
+    <div class="a5" style="text-align:center;">
+      <div class="ht shimmer-text" style="font-size:clamp(13px,3.2vw,17px);font-weight:800;line-height:1.4;">असली खाना factory जैसा नहीं होता —<br>और यही इसकी पहचान है</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /deck -->
+
+<!-- ━━━ FLOATING CONTACT STRIP ━━━ -->
+<div id="contact-strip" style="position:fixed;bottom:64px;left:0;right:0;z-index:998;background:rgba(4,10,3,.95);backdrop-filter:blur(20px);border-top:1px solid rgba(67,160,71,.2);padding:8px 10px;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;box-shadow:0 -4px 16px rgba(0,0,0,0.4);">
+  <a href="https://bharatpure.com" style="display:flex;align-items:center;gap:5px;text-decoration:none;background:rgba(255,255,255,0.1);padding:5px 12px;border-radius:100px;border:1px solid rgba(255,255,255,0.25);">
+    <span style="font-size:14px;">🌐</span>
+    <span style="font-family:'Mukta',sans-serif;font-size:11px;font-weight:700;color:#FFFFFF;">Website</span>
+  </a>
+  <a href="https://wa.me/919352398437?text=नमस्ते%20BharatPure!%20मैं%20आपके%20प्लेटफ़ॉर्म%20के%20बारे%20में%20और%20जानना%20चाहता%20हूँ।" style="display:flex;align-items:center;gap:5px;text-decoration:none;background:rgba(37,211,102,0.15);padding:5px 12px;border-radius:100px;border:1px solid rgba(37,211,102,0.45);">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="#25D366"><path d="M12.031 0C5.385 0 .001 5.385.001 12.031c0 2.126.551 4.195 1.597 6.012L0 24l6.113-1.603c1.764.954 3.766 1.458 5.918 1.458 6.646 0 12.03-5.385 12.03-12.03C24.061 5.385 18.677 0 12.031 0zm3.626 17.387c-.154.433-.895.845-1.267.89-.356.044-.82.102-2.39-.548-1.895-.783-3.097-2.73-3.19-2.853-.088-.124-.763-1.015-.763-1.933 0-.92.476-1.372.646-1.55.17-.18.368-.226.492-.226.124 0 .248.001.356.006.115.004.267-.044.41.312.146.368.5 1.226.545 1.318.044.092.074.198.016.321-.06.124-.09.2-.18.312-.09.112-.19.237-.27.332-.088.096-.18.201-.076.357.104.156.463.742.99 1.214.678.608 1.246.797 1.402.89.156.092.247.076.34-.032.092-.11.398-.464.505-.623.104-.156.208-.13.35-.077.142.054.903.426 1.058.504.156.076.26.115.298.18.038.064.038.373-.116.806z"/></svg>
+    <span style="font-family:'Mukta',sans-serif;font-size:11px;font-weight:700;color:#25D366;">WhatsApp</span>
+  </a>
+  <a href="https://t.me/petrol4u" style="display:flex;align-items:center;gap:5px;text-decoration:none;background:rgba(109,183,232,0.15);padding:5px 12px;border-radius:100px;border:1px solid rgba(109,183,232,0.45);">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="#6DB7E8"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.676c.223-.2-.05-.31-.346-.114l-6.4 4.02-2.76-.86c-.6-.188-.61-.6.126-.89l10.814-4.17c.5-.188.937.106.82.934z"/></svg>
+    <span style="font-family:'Mukta',sans-serif;font-size:11px;font-weight:700;color:#6DB7E8;">Telegram</span>
+  </a>
+  <a href="https://instagram.com/bharatpure.co" style="display:flex;align-items:center;gap:5px;text-decoration:none;background:rgba(225,48,108,0.15);padding:5px 12px;border-radius:100px;border:1px solid rgba(225,48,108,0.45);">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="#E1306C"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 1.76-6.98 6.979-.058 1.28-.072 1.688-.072 4.948s.014 3.668.072 4.948c.2 5.218 2.622 6.779 6.98 6.979 1.28.058 1.688.072 4.947.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-1.762 6.979-6.979.058-1.28.072-1.689.072-4.948s-.014-3.668-.072-4.948c-.197-5.218-2.625-6.779-6.979-6.979-1.28-.058-1.689-.072-4.948-.072zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+    <span style="font-family:'Mukta',sans-serif;font-size:11px;font-weight:700;color:#E1306C;">Instagram</span>
+  </a>
+</div>
+
+<!-- COPYRIGHT -->
+<div style="position:fixed;bottom:120px;right:16px;z-index:998;font-size:11px;font-weight:700;color:rgba(255,255,255,0.8);font-family:'Mukta',sans-serif;background:rgba(6,12,4,0.6);border:1px solid rgba(67,160,71,0.3);padding:4px 10px;border-radius:100px;backdrop-filter:blur(8px);pointer-events:none;box-shadow:0 4px 12px rgba(0,0,0,0.3);">
+  © 2026 BharatPure™
+</div>
+
+<!-- ━━━ BOTTOM NAV ━━━ -->
+<div id="nav-bar">
+  <button class="nav-btn" id="prev" onclick="changeSlide(-1)">‹</button>
+  <div id="dots-wrap"></div>
+  <span id="slide-counter">1/22</span>
+  <button class="nav-btn" id="next" onclick="changeSlide(1)">›</button>
+</div>
+
+<script type="text/javascript">
+  function googleTranslateElementInit() {
+    new google.translate.TranslateElement({pageLanguage: 'hi', includedLanguages: 'hi,en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE, autoDisplay: false}, 'google_translate_element');
+  }
+</script>
+<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+<script>
+/* --- Anti-Copy / Security Lock --- */
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('selectstart', e => e.preventDefault());
+document.addEventListener('copy', e => { e.preventDefault(); alert('Copying is disabled.'); });
+document.addEventListener('keydown', e => {
+  if(e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key)) || (e.ctrlKey && e.key === 'U')) {
+    e.preventDefault();
+  }
+});
+
+/* --- Translate & Theme Logic --- */
+function wrapEmojis(node) {
+  if (node.nodeType === 3) {
+    const emojiRegex = /([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g;
+    if (emojiRegex.test(node.nodeValue)) {
+      const span = document.createElement('span');
+      span.innerHTML = node.nodeValue.replace(emojiRegex, '<span class="emoji">$1</span>');
+      node.parentNode.replaceChild(span, node);
+    }
+  } else if (node.nodeType === 1 && !['SCRIPT', 'STYLE'].includes(node.nodeName) && !node.classList.contains('emoji')) {
+    Array.from(node.childNodes).forEach(wrapEmojis);
+  }
+}
+wrapEmojis(document.body);
+
+function getCookie(name) {
+  let match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+  return match ? match[2] : null;
+}
+let currentLang = getCookie('googtrans') === '/hi/en' ? 'en' : 'hi';
+
+window.addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('lang-btn');
+  if (btn) btn.innerText = currentLang === 'hi' ? 'A/अ' : 'अ/A';
+});
+
+function toggleLang() {
+  let newLang = currentLang === 'hi' ? 'en' : 'hi';
+  document.cookie = `googtrans=/hi/${newLang}; path=/`;
+  document.cookie = `googtrans=/hi/${newLang}; path=/; domain=.${window.location.hostname}`;
+  window.location.reload();
+}
+function toggleTheme() {
+  document.documentElement.classList.toggle('light-mode');
+  const isLight = document.documentElement.classList.contains('light-mode');
+  document.getElementById('theme-btn').innerText = isLight ? '🌙' : '☀️';
+}
+
+const TOTAL = 24;
+let cur = 0, animating = false;
+const slides = document.querySelectorAll('.slide');
+const dotsWrap = document.getElementById('dots-wrap');
+const counter = document.getElementById('slide-counter');
+const progress = document.getElementById('progress');
+const modeText = document.getElementById('mode-text');
+
+const slideNames = [
+  'परिचय','शुरुआत','समस्या','दलाल','भारतPure','करार','मिलावट','लैब टेस्ट','QR','भुगतान',
+  'तुलना','किसान','ग्राहक','चक्र','गारंटी','सपना','जुड़ो',
+  'सब्सक्रिप्शन','कैसे काम करे','फेलओवर','प्लेटफ़ॉर्म सुरक्षा','तीन स्तर','किसान से बात','भिन्नता'
+];
+
+for(let i=0;i<TOTAL;i++){
+  const d=document.createElement('div');
+  d.className='dot';
+  d.onclick=()=>goTo(i);
+  dotsWrap.appendChild(d);
+}
+
+function updateUI(){
+  document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('on',i===cur));
+  counter.textContent=`${cur+1}/${TOTAL}`;
+  progress.style.width=`${((cur+1)/TOTAL)*100}%`;
+  modeText.textContent=slideNames[cur]||'भारतPure';
+  setTimeout(()=>{
+    const el=document.getElementById('s'+(cur+1));
+    if(el)el.querySelectorAll('.bar-fill').forEach(b=>{const w=b.style.getPropertyValue('--w');if(w)b.style.width=w;});
+  },400);
+}
+
+function goTo(idx){
+  if(animating||idx===cur||idx<0||idx>=TOTAL)return;
+  animating=true;
+  const prev=slides[cur],next=slides[idx];
+  const dir=idx>cur?1:-1;
+  prev.style.transition='opacity .42s ease,transform .42s ease';
+  prev.style.transform=`translateX(${dir*-70}px)`;
+  prev.style.opacity='0';
+  prev.classList.remove('active');
+  setTimeout(()=>{prev.style.transition='';prev.style.transform='';prev.style.opacity='';},480);
+  cur=idx;
+  next.style.transition='none';
+  next.style.transform=`translateX(${dir*70}px)`;
+  next.style.opacity='0';
+  next.offsetHeight;
+  next.style.transition='opacity .42s ease,transform .42s ease';
+  next.style.transform='translateX(0)';
+  next.style.opacity='1';
+  next.classList.add('active');
+  updateUI();
+  setTimeout(()=>{next.style.transition='';next.style.transform='';next.style.opacity='';animating=false;},480);
+}
+
+function changeSlide(dir){goTo(cur+dir);}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' ')changeSlide(1);
+  if(e.key==='ArrowLeft')changeSlide(-1);
+});
+
+let tx=0,ty=0;
+document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY;},{passive:true});
+document.addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-tx;
+  const dy=Math.abs(e.changedTouches[0].clientY-ty);
+  if(Math.abs(dx)>44&&dy<60)changeSlide(dx<0?1:-1);
+},{passive:true});
+
+function animateChain(){
+  if(cur!==2)return;
+  const items=document.querySelectorAll('.chain-item');
+  items.forEach(i=>i.classList.remove('highlight'));
+  let idx=0;
+  const step=()=>{
+    if(idx<items.length){items[idx].classList.add('highlight');idx++;setTimeout(step,360);}
+    else{setTimeout(()=>{items.forEach(i=>i.classList.add('highlight'));},200);}
+  };
+  setTimeout(step,600);
+}
+
+slides[0].classList.add('active');
+updateUI();
+
+const observer=new MutationObserver(()=>{if(cur===2)animateChain();});
+slides.forEach(s=>observer.observe(s,{attributes:true,attributeFilter:['class']}));
+</script>
+</body>
+</html>
